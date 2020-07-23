@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Paper from "@material-ui/core/Paper";
 import {
   ViewState,
@@ -17,9 +17,8 @@ import {
   TodayButton,
   AppointmentForm,
 } from "@devexpress/dx-react-scheduler-material-ui";
+import DropDown from "./DropDown"
 
-// dont need fake data?
-import { appointments } from "../demoData/appointments";
 
 const messages = {
   moreInformationLabel: "",
@@ -60,11 +59,19 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
           type="outlinedSelect"
         />
 
+        <AppointmentForm.Label text="Location" type="location" />
+        <AppointmentForm.TextEditor
+          value={appointmentData.notes}
+          onValueChange={(value) => onCustomFieldChange(value, "location")}
+          placeholder="Location"
+          type="noteTextEditor"
+        />
+
         <AppointmentForm.Label text="Notes" type="title" />
         <AppointmentForm.TextEditor
           value={appointmentData.notes}
           onValueChange={(value) => onCustomFieldChange(value, "notes")}
-          placeholder="Optional"
+          placeholder="Additional Details"
           type="noteTextEditor"
         />
       </div>
@@ -78,20 +85,27 @@ const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
   );
 };
 
+
 const SchedulerComponent = () => {
   const [schedulerState, setSchedulerState] = useState({
     data: [],
     currentDate: new Date(),
   });
 
+  const [filteredAppointments, setFilteredAppointments] = useState([])
+  const [activeDriver, setActiveDriver] = useState(drivers[0])
 
   const commitChanges = ({ added, changed, deleted }) => {
-    setSchedulerState((state) => {
+    console.log(added)
+    console.log(added.startDate)
+
+    setSchedulerState((state) => { 
+      console.log(state)
       let { data } = state;
       if (added) {
         const startingAddedId =
           data.length > 0 ? data[data.length - 1].id + 1 : 0;
-        data = [...data, { id: startingAddedId, ...added }];
+        data = [...data, { id: startingAddedId, driver: activeDriver, ...added }];
       }
       if (changed) {
         data = data.map((appointment) =>
@@ -107,16 +121,25 @@ const SchedulerComponent = () => {
     });
   };
 
-  const { data } = schedulerState;
+
+  useEffect(() => {
+    const filteredAppointments=schedulerState.data.filter(appointment =>appointment.driver == activeDriver)
+
+    setFilteredAppointments(filteredAppointments)
+
+  }, [activeDriver, schedulerState])
+
+  console.log(schedulerState)
+  console.log(filteredAppointments)
 
   return (
     <Paper>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <button>chg driver</button>
+        <DropDown drivers={drivers} type="Driver" activeDriver={activeDriver} setActiveDriver={setActiveDriver} />
         <button>download driver</button>
       </div>
 
-      <Scheduler data={data} height={660}>
+      <Scheduler data={filteredAppointments} height={660}>
         <ViewState
           defaultCurrentDate={schedulerState.currentDate}
           defaultCurrentViewName="Week"
@@ -127,7 +150,6 @@ const SchedulerComponent = () => {
 
         <DayView startDayHour={9} endDayHour={18} />
         <WeekView startDayHour={10} endDayHour={19} />
-
         <MonthView startDayHour={10} endDayHour={19} />
 
         <Toolbar />
@@ -136,13 +158,11 @@ const SchedulerComponent = () => {
 
         <ViewSwitcher />
         <Appointments />
-        {/* <AppointmentForm layoutComponent={AppointmentFormDetails}/> */}
         <AppointmentForm
           basicLayoutComponent={BasicLayout}
           selectComponent={SelectProps}
           textEditorComponent={RemoveComponent}
           booleanEditorComponent={RemoveComponent}
-          // labelComponent={RemoveComponent}
           messages={messages}
         />
       </Scheduler>

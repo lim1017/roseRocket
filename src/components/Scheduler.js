@@ -27,10 +27,7 @@ import { extendMoment } from "moment-range";
 
 const moment = extendMoment(Moment);
 
-// next to work on conflicting times
-//check line 101  compare .startdate/.enddate
-//look for library to check for conflicting time interval
-// https://stackoverflow.com/questions/40970369/use-momentjs-to-check-if-this-time-range-is-conflict-with-other-time-range
+
 const messages = {
   moreInformationLabel: "",
 };
@@ -135,7 +132,7 @@ const SchedulerComponent = () => {
         <button>download driver</button>
       </div>
 
-      <Scheduler data={filteredAppointments} height={660}>
+      <Scheduler data={filteredAppointments} height={760}>
         <ViewState
           defaultCurrentDate={schedulerState.currentDate}
           defaultCurrentViewName="Week"
@@ -144,8 +141,8 @@ const SchedulerComponent = () => {
         <EditingState onCommitChanges={commitChanges} />
         <IntegratedEditing />
 
-        <DayView startDayHour={9} endDayHour={18} />
-        <WeekView startDayHour={10} endDayHour={19} />
+        <DayView startDayHour={0} endDayHour={24} />
+        <WeekView startDayHour={0} endDayHour={24} />
         <MonthView startDayHour={10} endDayHour={19} />
 
         <Toolbar />

@@ -25,7 +25,7 @@ export const BasicLayout = ({
           value={selectedTask.id}
           onValueChange={(value) => onCustomFieldChange(value, "title")}
           availableOptions={tasks}
-          type="outlinedSelect"
+          type="filledSelect"
         />
 
         <AppointmentForm.Label text="Location" type="location" />

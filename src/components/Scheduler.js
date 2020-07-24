@@ -56,15 +56,34 @@ const SchedulerComponent = () => {
 
   const commitChanges = ({ added, changed, deleted }) => {
     console.log(added)
-    console.log(added.startDate)
+    if (added !== undefined){
+      var range = moment.range([added.startDate, added.endDate])
+      console.log(range)
+    } 
 
-    let range = moment.range([added.startDate, added.endDate])
-    console.log(range)
+    if (changed !== undefined){
 
+      var chgAppointmentID = parseInt(Object.keys(changed)[0])
+      let chgAppointment=filteredAppointments.filter(appointment=>appointment.id === chgAppointmentID)
+
+      let start = changed[chgAppointmentID].startDate ? changed[chgAppointmentID].startDate : chgAppointment[chgAppointmentID].startDate
+      let end = changed[chgAppointmentID].endDate ? changed[chgAppointmentID].endDate : chgAppointment[chgAppointmentID].endDate
+
+      var range = moment.range([start, end])
+    } 
+    
     //check for conflicts
-    filteredAppointments.forEach(appointment =>{
+    const test = filteredAppointments.filter(appointment => appointment.id !== chgAppointmentID )
+    console.log(test)
+    const refilteredAppointments = added ? filteredAppointments : filteredAppointments.filter(appointment => appointment.id !== chgAppointmentID)
+
+    console.log(chgAppointmentID)
+    console.log(refilteredAppointments)
+
+    refilteredAppointments.forEach(appointment =>{
       console.log(appointment)
       let range2 = moment.range([appointment.startDate, appointment.endDate])
+      console.log(range2)
       if(range.overlaps(range2)){
         alert('conflict!')
       }

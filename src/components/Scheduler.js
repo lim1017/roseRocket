@@ -53,6 +53,7 @@ const SchedulerComponent = () => {
   const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(timeInterval[0]);
 
   const [filteredAppointments, setFilteredAppointments] = useState([]);
+  const [csvData, setCsvData] = useState([])
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
@@ -164,6 +165,54 @@ const SchedulerComponent = () => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
+
+  const convertData4csv = () =>{
+    const finalOP=[]
+      
+    let dates = filteredAppointments.map(appointment=> moment(appointment.startDate))  
+    let firstDate=moment.min(dates)
+    let lastDate=moment.max(dates)
+
+    console.log(firstDate)
+    console.log(firstDate.format("MM/DD/YYYY"))
+    console.log(moment(new Date(firstDate.format("MM/DD/YYYY"))))
+
+    console.log(filteredAppointments)
+
+    do {
+      finalOP.push({Date:`${firstDate.format("MM/DD/YYYY")}-${moment(firstDate).add("days", activeDriverTimeInverval-1).format("MM/DD/YYYY")}`, Pickup:0, Dropoff:0, Other:0})
+      firstDate=moment(firstDate).add("days", activeDriverTimeInverval)
+      console.log(firstDate)
+      console.log(firstDate.format("MMM Do YY"))
+    }
+    while (firstDate.isBefore(lastDate))
+
+    console.log(finalOP)
+
+
+    filteredAppointments.forEach(appointment =>{
+      
+      let convert2moment = moment(new Date(appointment.startDate)).format("MM/DD/YYYY")
+
+      finalOP.forEach((timeSlot, index)=>{
+        console.log(timeSlot)
+        console.log(index)
+
+        let split = timeSlot.Date.split("-") 
+        console.log(appointment.startDate)
+        if (moment(convert2moment).isBetween(split[0],split[1], "days", '[]')) {
+          // console.log(appointment, 'belongs in this timeSlot', timeSlot)
+          finalOP[index][appointment.title]++
+        }
+      })
+    })
+
+    console.log(finalOP)
+    
+    return finalOP
+
+  }
+
   return (
     <Paper>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -183,8 +232,9 @@ const SchedulerComponent = () => {
         <button
           style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
         >
-          <CSVLink data={filteredAppointments}>Download Driver Schedule</CSVLink>
+          <CSVLink data={convertData4csv()}>Download Driver Schedule</CSVLink>
         </button>
+        <button onClick={convertData4csv}>test csv</button>
         </div>
       </div>
 

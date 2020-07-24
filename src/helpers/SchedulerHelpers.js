@@ -4,9 +4,8 @@ export const tasks = [
   { id: 3, text: "Other" },
 ];
 
-export const drivers = ["Bob", "Tom", "Jane"]
+export const drivers = ["Bob", "Tom", "Jane"];
 
 export const RemoveComponent = (props) => {
   return null;
 };
-

@@ -19,27 +19,29 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import DropDown from "./DropDown"
 
+import { RemoveComponent, tasks, drivers } from '../helpers/SchedulerHelpers'
 
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+
+const moment = extendMoment(Moment);
+
+
+// next to work on conflicting times
+//check line 101  compare .startdate/.enddate
+//look for library to check for conflicting time interval
+// https://stackoverflow.com/questions/40970369/use-momentjs-to-check-if-this-time-range-is-conflict-with-other-time-range
 const messages = {
   moreInformationLabel: "",
 };
 
-const tasks = [
-  { id: 1, text: "Pickup" },
-  { id: 2, text: "Dropoff" },
-  { id: 3, text: "Other" },
-];
 
-const drivers = ["Bob", "Tom", "Jane"]
 
-const SelectProps = (props) => {
+const dropDown = (props) => {
   // eslint-disable-next-line react/destructuring-assignment
   return <AppointmentForm.Select {...props} />;
 };
 
-const RemoveComponent = (props) => {
-  return null;
-};
 
 const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
   const onCustomFieldChange = (nextValue, type) => {
@@ -99,6 +101,19 @@ const SchedulerComponent = () => {
     console.log(added)
     console.log(added.startDate)
 
+    let range = moment.range([added.startDate, added.endDate])
+    console.log(range)
+
+    //check for conflicts
+    filteredAppointments.forEach(appointment =>{
+      console.log(appointment)
+      let range2 = moment.range([appointment.startDate, appointment.endDate])
+      if(range.overlaps(range2)){
+        alert('conflict!')
+      }
+    })
+
+
     setSchedulerState((state) => { 
       console.log(state)
       let { data } = state;
@@ -129,8 +144,8 @@ const SchedulerComponent = () => {
 
   }, [activeDriver, schedulerState])
 
-  console.log(schedulerState)
-  console.log(filteredAppointments)
+  // console.log(schedulerState)
+  // console.log(filteredAppointments)
 
   return (
     <Paper>
@@ -160,7 +175,7 @@ const SchedulerComponent = () => {
         <Appointments />
         <AppointmentForm
           basicLayoutComponent={BasicLayout}
-          selectComponent={SelectProps}
+          selectComponent={dropDown}
           textEditorComponent={RemoveComponent}
           booleanEditorComponent={RemoveComponent}
           messages={messages}

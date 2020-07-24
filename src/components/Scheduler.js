@@ -30,6 +30,9 @@ import { BasicLayout } from "./BasicFormLayout";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
 
+//Part A seems to be done.  next step is to get the csv working.  Check:
+// https://stackoverflow.com/questions/48760815/export-to-csv-button-in-react-table
+
 const moment = extendMoment(Moment);
 
 const messages = {
@@ -160,7 +163,7 @@ const SchedulerComponent = () => {
           activeDriver={activeDriver}
           setActiveDriver={setActiveDriver}
         />
-        <button>download driver</button>
+        <button>Download Driver Schedule</button>
       </div>
 
       <Scheduler data={filteredAppointments} height={760}>

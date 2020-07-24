@@ -163,7 +163,7 @@ const SchedulerComponent = () => {
           activeDriver={activeDriver}
           setActiveDriver={setActiveDriver}
         />
-        <button>Download Driver Schedule</button>
+        <button style={{height:"30px", marginTop:"2em", marginRight:"2em"}}>Download Driver Schedule</button>
       </div>
 
       <Scheduler data={filteredAppointments} height={760}>

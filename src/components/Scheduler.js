@@ -48,7 +48,7 @@ const SchedulerComponent = () => {
   const [showModal, setShowModal] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [activeDriver, setActiveDriver] = useState(drivers[0]);
-  const [conflictingAppointment, setConflictingAppointment] = useState(null);
+  const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
     chgType: null,
@@ -56,6 +56,7 @@ const SchedulerComponent = () => {
 
   const checkConflict = ({ added, changed, deleted }) => {
     let conflictFlag = false;
+    const appointmentConflicts=[]
     let range;
 
     if (deleted !== undefined) {
@@ -86,26 +87,29 @@ const SchedulerComponent = () => {
       range = moment.range([start, end]);
     }
 
-    //check for conflicts
+    
+    //if editing remove that appointment from list so no conflict
     const refilteredAppointments = added
       ? filteredAppointments
       : filteredAppointments.filter(
           (appointment) => appointment.id !== chgAppointmentID
         );
 
+    //checks remaining appointment for conflicts and adds them to an []
     refilteredAppointments.forEach((appointment) => {
-      console.log(appointment);
       let range2 = moment.range([appointment.startDate, appointment.endDate]);
       console.log(range2);
       if (range.overlaps(range2)) {
-        setShowModal(true);
-        setConflictingAppointment(appointment.id);
-        conflictFlag = true;
+        appointmentConflicts.push(appointment.id)
       }
     });
 
-    if (!conflictFlag) {
+    //make the appointment if no conflicts otherwise setConflicts
+    if (appointmentConflicts.length === 0) {
       commitChanges(added, changed, deleted);
+    } else {
+      setShowModal(true);
+      setConflictingAppointment(appointmentConflicts)
     }
   };
 
@@ -136,8 +140,12 @@ const SchedulerComponent = () => {
   };
 
   const handleOverwrite = () => {
-    //deletes the old conflicting appointment
-    commitChanges(undefined, undefined, conflictingAppointment);
+    //deletes old conflicting appointments
+    conflictingAppointment.forEach(conflict =>{
+      commitChanges(undefined, undefined, conflict);
+    })
+    setConflictingAppointment([])
+
 
     if (activeAppointment.chgType === "changed") {
       commitChanges(undefined, activeAppointment.appointment, undefined);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import { tasks } from '../helpers/SchedulerHelpers'
 
@@ -16,6 +16,12 @@ export const BasicLayout = ({
       setSelectedTask(tasks[nextValue-1])
     } else onFieldChange({ [type]: nextValue });
   };
+
+  useEffect(() => {
+    console.log('useeffect')
+    onFieldChange({ title: tasks[0].text, taskID:tasks[0].text.id })
+  }, [])
+  
 
   return (
     <div>

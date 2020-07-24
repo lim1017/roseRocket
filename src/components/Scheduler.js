@@ -19,17 +19,18 @@ import {
 } from "@devexpress/dx-react-scheduler-material-ui";
 import DropDown from "./DropDown";
 import Modal from "./Modal";
-
+import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
   drivers,
   dropDown,
   timeInterval
 } from "../helpers/SchedulerHelpers";
-import { BasicLayout } from "./BasicFormLayout";
 
 import Moment from "moment";
 import { extendMoment } from "moment-range";
+import { CSVLink, CSVDownload } from "react-csv";
+
 
 //Part A seems to be done.  next step is to get the csv working.  Check:
 // https://stackoverflow.com/questions/48760815/export-to-csv-button-in-react-table
@@ -50,7 +51,6 @@ const SchedulerComponent = () => {
 
   const [activeDriver, setActiveDriver] = useState(drivers[0]);
   const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(timeInterval[0]);
-
 
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
@@ -183,7 +183,7 @@ const SchedulerComponent = () => {
         <button
           style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
         >
-          Download Driver Schedule
+          <CSVLink data={filteredAppointments}>Download Driver Schedule</CSVLink>
         </button>
         </div>
       </div>

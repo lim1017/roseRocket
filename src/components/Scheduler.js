@@ -18,8 +18,13 @@ import {
   AppointmentForm,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import DropDown from "./DropDown";
+import Modal from "./Modal";
 
-import { RemoveComponent, drivers } from "../helpers/SchedulerHelpers";
+import {
+  RemoveComponent,
+  drivers,
+  dropDown,
+} from "../helpers/SchedulerHelpers";
 import { BasicLayout } from "./BasicFormLayout";
 
 import Moment from "moment";
@@ -27,14 +32,8 @@ import { extendMoment } from "moment-range";
 
 const moment = extendMoment(Moment);
 
-
 const messages = {
   moreInformationLabel: "",
-};
-
-const dropDown = (props) => {
-  // eslint-disable-next-line react/destructuring-assignment
-  return <AppointmentForm.Select {...props} />;
 };
 
 const SchedulerComponent = () => {
@@ -43,16 +42,32 @@ const SchedulerComponent = () => {
     currentDate: new Date(),
   });
 
+  const [showModal, setShowModal] = useState(false);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [activeDriver, setActiveDriver] = useState(drivers[0]);
+  const [conflictingAppointment, setConflictingAppointment] = useState(null);
+  const [activeAppointment, setActiveAppointment] = useState({
+    appointment: null,
+    chgType: null,
+  });
 
-  const commitChanges = ({ added, changed, deleted }) => {
-    if (added !== undefined) {
-      var range = moment.range([added.startDate, added.endDate]);
-      console.log(range);
+  const checkConflict = ({ added, changed, deleted }) => {
+    let conflictFlag = false;
+    let range;
+
+    if (deleted !== undefined) {
+      console.log(deleted);
+      commitChanges(added, changed, deleted);
+      return;
     }
 
-    if (changed !== undefined) {
+    if (added) {
+      setActiveAppointment({ appointment: added, chgType: "added" });
+      range = moment.range([added.startDate, added.endDate]);
+    }
+
+    if (changed) {
+      setActiveAppointment({ appointment: changed, chgType: "changed" });
       var chgAppointmentID = parseInt(Object.keys(changed)[0]);
       let chgAppointment = filteredAppointments.filter(
         (appointment) => appointment.id === chgAppointmentID
@@ -60,12 +75,12 @@ const SchedulerComponent = () => {
 
       let start = changed[chgAppointmentID].startDate
         ? changed[chgAppointmentID].startDate
-        : chgAppointment[chgAppointmentID].startDate;
+        : chgAppointment[0].startDate;
       let end = changed[chgAppointmentID].endDate
         ? changed[chgAppointmentID].endDate
-        : chgAppointment[chgAppointmentID].endDate;
+        : chgAppointment[0].endDate;
 
-      var range = moment.range([start, end]);
+      range = moment.range([start, end]);
     }
 
     //check for conflicts
@@ -80,10 +95,18 @@ const SchedulerComponent = () => {
       let range2 = moment.range([appointment.startDate, appointment.endDate]);
       console.log(range2);
       if (range.overlaps(range2)) {
-        alert("conflict!");
+        setShowModal(true);
+        setConflictingAppointment(appointment.id);
+        conflictFlag = true;
       }
     });
 
+    if (!conflictFlag) {
+      commitChanges(added, changed, deleted);
+    }
+  };
+
+  const commitChanges = (added, changed, deleted) => {
     setSchedulerState((state) => {
       console.log(state);
       let { data } = state;
@@ -109,16 +132,24 @@ const SchedulerComponent = () => {
     });
   };
 
+  const handleOverwrite = () => {
+    //deletes the old conflicting appointment
+    commitChanges(undefined, undefined, conflictingAppointment);
+
+    if (activeAppointment.chgType === "changed") {
+      commitChanges(undefined, activeAppointment.appointment, undefined);
+    } else if (activeAppointment.chgType === "added") {
+      commitChanges(activeAppointment.appointment, undefined, undefined);
+    }
+  };
+
   useEffect(() => {
     const filteredAppointments = schedulerState.data.filter(
-      (appointment) => appointment.driver == activeDriver
+      (appointment) => appointment.driver === activeDriver
     );
 
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
-
-  // console.log(schedulerState)
-  // console.log(filteredAppointments)
 
   return (
     <Paper>
@@ -138,7 +169,7 @@ const SchedulerComponent = () => {
           defaultCurrentViewName="Week"
         />
 
-        <EditingState onCommitChanges={commitChanges} />
+        <EditingState onCommitChanges={checkConflict} />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
@@ -159,6 +190,13 @@ const SchedulerComponent = () => {
           messages={messages}
         />
       </Scheduler>
+      <Modal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        conflictingAppointment={conflictingAppointment}
+        commitChanges={commitChanges}
+        handleOverwrite={handleOverwrite}
+      />
     </Paper>
   );
 };

@@ -24,6 +24,7 @@ import {
   RemoveComponent,
   drivers,
   dropDown,
+  timeInterval
 } from "../helpers/SchedulerHelpers";
 import { BasicLayout } from "./BasicFormLayout";
 
@@ -46,8 +47,12 @@ const SchedulerComponent = () => {
   });
 
   const [showModal, setShowModal] = useState(false);
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
+
   const [activeDriver, setActiveDriver] = useState(drivers[0]);
+  const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(timeInterval[0]);
+
+
+  const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
@@ -55,8 +60,7 @@ const SchedulerComponent = () => {
   });
 
   const checkConflict = ({ added, changed, deleted }) => {
-    let conflictFlag = false;
-    const appointmentConflicts=[]
+    const appointmentConflicts = [];
     let range;
 
     if (deleted !== undefined) {
@@ -87,7 +91,6 @@ const SchedulerComponent = () => {
       range = moment.range([start, end]);
     }
 
-    
     //if editing remove that appointment from list so no conflict
     const refilteredAppointments = added
       ? filteredAppointments
@@ -100,7 +103,7 @@ const SchedulerComponent = () => {
       let range2 = moment.range([appointment.startDate, appointment.endDate]);
       console.log(range2);
       if (range.overlaps(range2)) {
-        appointmentConflicts.push(appointment.id)
+        appointmentConflicts.push(appointment.id);
       }
     });
 
@@ -109,7 +112,7 @@ const SchedulerComponent = () => {
       commitChanges(added, changed, deleted);
     } else {
       setShowModal(true);
-      setConflictingAppointment(appointmentConflicts)
+      setConflictingAppointment(appointmentConflicts);
     }
   };
 
@@ -141,11 +144,10 @@ const SchedulerComponent = () => {
 
   const handleOverwrite = () => {
     //deletes old conflicting appointments
-    conflictingAppointment.forEach(conflict =>{
+    conflictingAppointment.forEach((conflict) => {
       commitChanges(undefined, undefined, conflict);
-    })
-    setConflictingAppointment([])
-
+    });
+    setConflictingAppointment([]);
 
     if (activeAppointment.chgType === "changed") {
       commitChanges(undefined, activeAppointment.appointment, undefined);
@@ -166,12 +168,24 @@ const SchedulerComponent = () => {
     <Paper>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <DropDown
-          drivers={drivers}
+          options={drivers}
           type="Driver"
-          activeDriver={activeDriver}
-          setActiveDriver={setActiveDriver}
+          active={activeDriver}
+          setActive={setActiveDriver}
         />
-        <button style={{height:"30px", marginTop:"2em", marginRight:"2em"}}>Download Driver Schedule</button>
+        <div>
+        <DropDown
+          options={timeInterval}
+          type="Time Interval"
+          active={activeDriverTimeInverval}
+          setActive={setActiveDriverTimeInverval}
+        />
+        <button
+          style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
+        >
+          Download Driver Schedule
+        </button>
+        </div>
       </div>
 
       <Scheduler data={filteredAppointments} height={760}>

@@ -9,6 +9,8 @@ export const tasks = [
 
 export const drivers = ["Bob", "Tom", "Jane"];
 
+export const timeInterval=[2,4,7,14,28]
+
 export const RemoveComponent = (props) => {
   return null;
 };

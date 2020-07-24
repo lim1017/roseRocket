@@ -16,27 +16,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DropDown = ({drivers, type, activeDriver, setActiveDriver}) =>{
+const DropDown = ({options, type, active, setActive}) =>{
 
   const classes = useStyles();
 
   const handleChange = (event) => {
-    setActiveDriver(event.target.value);
+    setActive(event.target.value);
   };
+
+  const unit = type==="Time Interval" ? "(Days)" : null
   
   return (
     <FormControl variant="outlined" className={classes.formControl}>
-        <InputLabel id="demo-simple-select-outlined-label">Select {type}</InputLabel>
+        <InputLabel id="demo-simple-select-outlined-label">{type} {unit}</InputLabel>
         <Select
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
-          value={activeDriver}
+          value={active}
           onChange={handleChange}
           label={type}
         >
         
-          {drivers ? drivers.map((driver, index) =>{
-            return <MenuItem key={index} value={driver}>{driver}</MenuItem>
+          {options ? options.map((option, index) =>{
+            return <MenuItem key={index} value={option}>{option}</MenuItem>
           }) : null}
 
         </Select>

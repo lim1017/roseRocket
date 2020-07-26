@@ -29,6 +29,7 @@ import {
   drivers,
   dropDown,
   timeInterval,
+  checkError,
   commitChanges
 } from "../helpers/SchedulerHelpers";
 
@@ -63,75 +64,76 @@ const SchedulerComponent = () => {
     chgType: null,
   });
 
-
-  const checkErrors = ({ added, changed, deleted }) => {
+  // const checkErrors = ({ added, changed, deleted },setSchedulerState, activeDriver) => {
+  //   let checkVariable = added ? added : changed[0]
   
-    if (added.endDate == "Invalid Date" || added.startDate == "Invalid Date"){
-      alert('invalid date')
-      return
-    }
+  //   if (checkVariable.endDate == "Invalid Date" || checkVariable.startDate == "Invalid Date"){
+  //     alert('Invalid date')
+  //     return
+  //   }
+  
+  //   checkConflict(added, changed, deleted, setSchedulerState, activeDriver)
+  // }
+  
 
-    checkConflict(added, changed, deleted)
-  }
+  // const checkConflict = (added, changed, deleted, setSchedulerState, activeDriver) => {
+  //   const appointmentConflicts = [];
+  //   let range;
 
-  const checkConflict = ({ added, changed, deleted }) => {
-    const appointmentConflicts = [];
-    let range;
-
-   
+  //   console.log('inside check')
 
 
-    if (deleted !== undefined) {
-      commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
-      return;
-    }
+  //   if (deleted !== undefined) {
+  //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
+  //     return;
+  //   }
 
-    if (added) {
-      setActiveAppointment({ appointment: added, chgType: "added" });
-      range = moment.range([added.startDate, added.endDate]);
-    }
+  //   if (added) {
+  //     setActiveAppointment({ appointment: added, chgType: "added" });
+  //     range = moment.range([added.startDate, added.endDate]);
+  //   }
 
-    if (changed) {
-      setActiveAppointment({ appointment: changed, chgType: "changed" });
-      var chgAppointmentID = parseInt(Object.keys(changed)[0]);
-      let chgAppointment = filteredAppointments.filter(
-        (appointment) => appointment.id === chgAppointmentID
-      );
+  //   if (changed) {
+  //     setActiveAppointment({ appointment: changed, chgType: "changed" });
+  //     var chgAppointmentID = parseInt(Object.keys(changed)[0]);
+  //     let chgAppointment = filteredAppointments.filter(
+  //       (appointment) => appointment.id === chgAppointmentID
+  //     );
 
-      let start = changed[chgAppointmentID].startDate
-        ? changed[chgAppointmentID].startDate
-        : chgAppointment[0].startDate;
-      let end = changed[chgAppointmentID].endDate
-        ? changed[chgAppointmentID].endDate
-        : chgAppointment[0].endDate;
+  //     let start = changed[chgAppointmentID].startDate
+  //       ? changed[chgAppointmentID].startDate
+  //       : chgAppointment[0].startDate;
+  //     let end = changed[chgAppointmentID].endDate
+  //       ? changed[chgAppointmentID].endDate
+  //       : chgAppointment[0].endDate;
 
-      range = moment.range([start, end]);
-    }
+  //     range = moment.range([start, end]);
+  //   }
 
-    //if editing remove that appointment from list so no conflict
-    const refilteredAppointments = added
-      ? filteredAppointments
-      : filteredAppointments.filter(
-          (appointment) => appointment.id !== chgAppointmentID
-        );
+  //   //if editing remove that appointment from list so no conflict
+  //   const refilteredAppointments = added
+  //     ? filteredAppointments
+  //     : filteredAppointments.filter(
+  //         (appointment) => appointment.id !== chgAppointmentID
+  //       );
 
-    //checks remaining appointment for conflicts and adds them to an []
-    refilteredAppointments.forEach((appointment) => {
-      let range2 = moment.range([appointment.startDate, appointment.endDate]);
-      console.log(range2);
-      if (range.overlaps(range2)) {
-        appointmentConflicts.push(appointment.id);
-      }
-    });
+  //   //checks remaining appointment for conflicts and adds them to an []
+  //   refilteredAppointments.forEach((appointment) => {
+  //     let range2 = moment.range([appointment.startDate, appointment.endDate]);
+  //     console.log(range2);
+  //     if (range.overlaps(range2)) {
+  //       appointmentConflicts.push(appointment.id);
+  //     }
+  //   });
 
-    //make the appointment if no conflicts otherwise setConflicts
-    if (appointmentConflicts.length === 0) {
-      commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
-    } else {
-      setShowModal(true);
-      setConflictingAppointment(appointmentConflicts);
-    }
-  };
+  //   //make the appointment if no conflicts otherwise setConflicts
+  //   if (appointmentConflicts.length === 0) {
+  //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
+  //   } else {
+  //     setShowModal(true);
+  //     setConflictingAppointment(appointmentConflicts);
+  //   }
+  // };
 
   // const commitChanges = (added, changed, deleted) => {
   //   setSchedulerState((state) => {
@@ -225,10 +227,6 @@ const SchedulerComponent = () => {
     return finalOP;
   };
 
-  const runThis = (one, two ,three) =>{
-    console.log(one, two ,three)
-  }
-
   return (
     <Paper>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -268,7 +266,7 @@ const SchedulerComponent = () => {
           defaultCurrentViewName="Week"
         />
 
-        <EditingState onCommitChanges={checkErrors} />
+        <EditingState onCommitChanges={(chgType)=>checkError(chgType, setSchedulerState, activeDriver, setActiveAppointment, filteredAppointments, setShowModal, setConflictingAppointment)} />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />

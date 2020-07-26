@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SimpleModal({showModal, setShowModal, handleOverwrite, conflictingAppointment}) {
+export default function SimpleModal({showModal, setShowModal, handleOverwrite, title, msg}) {
 
  
 
@@ -51,8 +51,8 @@ export default function SimpleModal({showModal, setShowModal, handleOverwrite, c
 
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">{`Warning ${conflictingAppointment.length} conflict(s) detected`}</h2>
-      <p>Overwrite conflicting appointment(s)?</p>
+      <h2 id="simple-modal-title">{title}</h2>
+      <p>{msg}</p>
       <button onClick={handleYes}>Yes</button>
       <button onClick={handleClose}>No</button>
 
@@ -63,9 +63,6 @@ export default function SimpleModal({showModal, setShowModal, handleOverwrite, c
 
   return (
     <div>
-      <button type="button" onClick={handleOpen}>
-        Open Modals
-      </button>
       <Modal
         open={showModal}
         onClose={handleClose}

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DropDown = ({options, type, active, setActive}) =>{
+const DropDown = ({options, type, active, setActive, testID}) =>{
 
   const classes = useStyles();
 
@@ -35,10 +35,11 @@ const DropDown = ({options, type, active, setActive}) =>{
           value={active}
           onChange={handleChange}
           label={type}
+          data-testid={testID}
         >
         
           {options ? options.map((option, index) =>{
-            return <MenuItem key={index} value={option}>{option}</MenuItem>
+            return <MenuItem key={index} value={option} data-testid={`${testID}${index}`}>{option}</MenuItem>
           }) : null}
 
         </Select>

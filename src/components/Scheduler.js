@@ -17,19 +17,20 @@ import {
   TodayButton,
   AppointmentForm,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import DropDown from "./DropDown";
+import Moment from "moment";
+import { extendMoment } from "moment-range";
+import { CSVLink } from "react-csv";
+
+import DropDown from "./DropDown/DropDown";
 import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
   drivers,
   dropDown,
-  timeInterval
+  timeInterval,
+  commitChanges
 } from "../helpers/SchedulerHelpers";
-
-import Moment from "moment";
-import { extendMoment } from "moment-range";
-import { CSVLink, CSVDownload } from "react-csv";
 
 
 //Part A seems to be done.  next step is to get the csv working.  Check:
@@ -50,23 +51,38 @@ const SchedulerComponent = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [activeDriver, setActiveDriver] = useState(drivers[0]);
-  const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(timeInterval[0]);
+  const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
+    timeInterval[0]
+  );
 
   const [filteredAppointments, setFilteredAppointments] = useState([]);
-  const [csvData, setCsvData] = useState([])
+  const [csvData, setCsvData] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
     chgType: null,
   });
 
+
+  const checkErrors = ({ added, changed, deleted }) => {
+  
+    if (added.endDate == "Invalid Date" || added.startDate == "Invalid Date"){
+      alert('invalid date')
+      return
+    }
+
+    checkConflict(added, changed, deleted)
+  }
+
   const checkConflict = ({ added, changed, deleted }) => {
     const appointmentConflicts = [];
     let range;
 
+   
+
+
     if (deleted !== undefined) {
-      console.log(deleted);
-      commitChanges(added, changed, deleted);
+      commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
       return;
     }
 
@@ -110,50 +126,50 @@ const SchedulerComponent = () => {
 
     //make the appointment if no conflicts otherwise setConflicts
     if (appointmentConflicts.length === 0) {
-      commitChanges(added, changed, deleted);
+      commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
     } else {
       setShowModal(true);
       setConflictingAppointment(appointmentConflicts);
     }
   };
 
-  const commitChanges = (added, changed, deleted) => {
-    setSchedulerState((state) => {
-      console.log(state);
-      let { data } = state;
-      if (added) {
-        const startingAddedId =
-          data.length > 0 ? data[data.length - 1].id + 1 : 0;
-        data = [
-          ...data,
-          { id: startingAddedId, driver: activeDriver, ...added },
-        ];
-      }
-      if (changed) {
-        data = data.map((appointment) =>
-          changed[appointment.id]
-            ? { ...appointment, ...changed[appointment.id] }
-            : appointment
-        );
-      }
-      if (deleted !== undefined) {
-        data = data.filter((appointment) => appointment.id !== deleted);
-      }
-      return { data };
-    });
-  };
+  // const commitChanges = (added, changed, deleted) => {
+  //   setSchedulerState((state) => {
+  //     console.log(state);
+  //     let { data } = state;
+  //     if (added) {
+  //       const startingAddedId =
+  //         data.length > 0 ? data[data.length - 1].id + 1 : 0;
+  //       data = [
+  //         ...data,
+  //         { id: startingAddedId, driver: activeDriver, ...added },
+  //       ];
+  //     }
+  //     if (changed) {
+  //       data = data.map((appointment) =>
+  //         changed[appointment.id]
+  //           ? { ...appointment, ...changed[appointment.id] }
+  //           : appointment
+  //       );
+  //     }
+  //     if (deleted !== undefined) {
+  //       data = data.filter((appointment) => appointment.id !== deleted);
+  //     }
+  //     return { data };
+  //   });
+  // };
 
   const handleOverwrite = () => {
     //deletes old conflicting appointments
     conflictingAppointment.forEach((conflict) => {
-      commitChanges(undefined, undefined, conflict);
+      commitChanges(undefined, undefined, conflict, setSchedulerState, activeDriver);
     });
     setConflictingAppointment([]);
 
     if (activeAppointment.chgType === "changed") {
-      commitChanges(undefined, activeAppointment.appointment, undefined);
+      commitChanges(undefined, activeAppointment.appointment, undefined, setSchedulerState, activeDriver);
     } else if (activeAppointment.chgType === "added") {
-      commitChanges(activeAppointment.appointment, undefined, undefined);
+      commitChanges(activeAppointment.appointment, undefined, undefined, setSchedulerState, activeDriver);
     }
   };
 
@@ -165,52 +181,52 @@ const SchedulerComponent = () => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
+  const convertData4csv = () => {
+    setCsvData([]);
+    const finalOP = [];
 
-  const convertData4csv = () =>{
-    const finalOP=[]
-      
-    let dates = filteredAppointments.map(appointment=> moment(appointment.startDate))  
-    let firstDate=moment.min(dates)
-    let lastDate=moment.max(dates)
+    let dates = filteredAppointments.map((appointment) =>
+      moment(appointment.startDate)
+    );
+    let firstDate = moment.min(dates);
+    let lastDate = moment.max(dates);
 
-    console.log(firstDate)
-    console.log(firstDate.format("MM/DD/YYYY"))
-    console.log(moment(new Date(firstDate.format("MM/DD/YYYY"))))
-
-    console.log(filteredAppointments)
+    // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
 
     do {
-      finalOP.push({Date:`${firstDate.format("MM/DD/YYYY")}-${moment(firstDate).add("days", activeDriverTimeInverval-1).format("MM/DD/YYYY")}`, Pickup:0, Dropoff:0, Other:0})
-      firstDate=moment(firstDate).add("days", activeDriverTimeInverval)
-      console.log(firstDate)
-      console.log(firstDate.format("MMM Do YY"))
-    }
-    while (firstDate.isBefore(lastDate))
+      finalOP.push({
+        Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
+          .add("days", activeDriverTimeInverval - 1)
+          .format("MM/DD/YYYY")}`,
+        Pickup: 0,
+        Dropoff: 0,
+        Other: 0,
+      });
+      firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
+    } while (firstDate.isBefore(lastDate));
 
-    console.log(finalOP)
+    filteredAppointments.forEach((appointment) => {
+      let convert2moment = moment(new Date(appointment.startDate)).format(
+        "MM/DD/YYYY"
+      );
 
-
-    filteredAppointments.forEach(appointment =>{
-      
-      let convert2moment = moment(new Date(appointment.startDate)).format("MM/DD/YYYY")
-
-      finalOP.forEach((timeSlot, index)=>{
-        console.log(timeSlot)
-        console.log(index)
-
-        let split = timeSlot.Date.split("-") 
-        console.log(appointment.startDate)
-        if (moment(convert2moment).isBetween(split[0],split[1], "days", '[]')) {
-          // console.log(appointment, 'belongs in this timeSlot', timeSlot)
-          finalOP[index][appointment.title]++
+      // finalOP.slice(1)
+      finalOP.forEach((timeSlot, index) => {
+        let split = timeSlot.Date.split("-");
+        if (
+          moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
+        ) {
+          finalOP[index][appointment.title]++;
         }
-      })
-    })
+      });
+    });
 
-    console.log(finalOP)
-    
-    return finalOP
+    setCsvData(finalOP);
+    return finalOP;
+  };
 
+  const runThis = (one, two ,three) =>{
+    console.log(one, two ,three)
   }
 
   return (
@@ -221,20 +237,28 @@ const SchedulerComponent = () => {
           type="Driver"
           active={activeDriver}
           setActive={setActiveDriver}
+          testID="driverDropdown"
         />
         <div>
-        <DropDown
-          options={timeInterval}
-          type="Time Interval"
-          active={activeDriverTimeInverval}
-          setActive={setActiveDriverTimeInverval}
-        />
-        <button
-          style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
-        >
-          <CSVLink data={convertData4csv()}>Download Driver Schedule</CSVLink>
-        </button>
-        <button onClick={convertData4csv}>test csv</button>
+          <DropDown
+            options={timeInterval}
+            type="Time Interval"
+            active={activeDriverTimeInverval}
+            setActive={setActiveDriverTimeInverval}
+            testID="timeIntervalDropdown"
+          />
+          <button
+            style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
+          >
+            <CSVLink
+              data={csvData}
+              asyncOnClick={true}
+              onClick={() => convertData4csv()}
+              filename={`${activeDriver}${activeDriverTimeInverval}interval.csv`}
+            >
+              Download Driver Tasks
+            </CSVLink>
+          </button>
         </div>
       </div>
 
@@ -244,7 +268,7 @@ const SchedulerComponent = () => {
           defaultCurrentViewName="Week"
         />
 
-        <EditingState onCommitChanges={checkConflict} />
+        <EditingState onCommitChanges={checkErrors} />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
@@ -269,9 +293,10 @@ const SchedulerComponent = () => {
         showModal={showModal}
         setShowModal={setShowModal}
         conflictingAppointment={conflictingAppointment}
-        commitChanges={commitChanges}
         handleOverwrite={handleOverwrite}
-      />
+        title={`Warning ${conflictingAppointment.length} conflict(s) detected`}
+        msg="Overwrite conflicting appointment(s)?"
+        />
     </Paper>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
-import { tasks } from '../helpers/SchedulerHelpers'
+import { tasks } from "../data/data";
 
 export const BasicLayout = ({
   onFieldChange,

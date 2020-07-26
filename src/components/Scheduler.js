@@ -29,12 +29,11 @@ import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
-  drivers,
   dropDown,
-  timeInterval,
   checkError,
   commitChanges
 } from "../helpers/SchedulerHelpers";
+import { timeInterval } from "../data/data"
 
 
 const moment = extendMoment(Moment);

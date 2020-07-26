@@ -22,6 +22,7 @@ import { extendMoment } from "moment-range";
 import { CSVLink } from "react-csv";
 
 import DropDown from "./DropDown/DropDown";
+import Header from "./Header"
 import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
@@ -229,7 +230,8 @@ const SchedulerComponent = () => {
 
   return (
     <Paper>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} convertData4csv={convertData4csv} />
+      {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
         <DropDown
           options={drivers}
           type="Driver"
@@ -257,8 +259,8 @@ const SchedulerComponent = () => {
               Download Driver Tasks
             </CSVLink>
           </button>
-        </div>
-      </div>
+        </div> 
+      </div>*/}
 
       <Scheduler data={filteredAppointments} height={760}>
         <ViewState

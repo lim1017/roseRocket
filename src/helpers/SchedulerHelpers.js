@@ -4,22 +4,12 @@ import Moment from "moment";
 import { extendMoment } from "moment-range";
 const moment = extendMoment(Moment);
 
-export const tasks = [
-  { id: 1, text: "Pickup" },
-  { id: 2, text: "Dropoff" },
-  { id: 3, text: "Other" },
-];
-
-export const drivers = ["Bob", "Tom", "Jane"];
-
-export const timeInterval = [2, 4, 7, 14, 28];
 
 export const RemoveComponent = (props) => {
   return null;
 };
 
 export const dropDown = (props) => {
-  // eslint-disable-next-line react/destructuring-assignment
   return <AppointmentForm.Select {...props} />;
 };
 
@@ -30,9 +20,7 @@ export const commitChanges = (
   setSchedulerState,
   activeDriver
 ) => {
-  console.log("inside commit");
   setSchedulerState((state) => {
-    console.log(state);
     let { data } = state;
     if (added) {
       const startingAddedId =
@@ -170,17 +158,15 @@ export const checkConflict = (
     range = moment.range([start, end]);
   }
 
-  //if editing remove that appointment from list so no conflict
-  const refilteredAppointments = added
+  const removeActiveAppointment = added
     ? filteredAppointments
     : filteredAppointments.filter(
         (appointment) => appointment.id !== chgAppointmentID
       );
 
-  //checks remaining appointment for conflicts and adds them to an []
-  refilteredAppointments.forEach((appointment) => {
+  //checks remaining appointment for conflicts and stores any conflicting ones to delete later
+  removeActiveAppointment.forEach((appointment) => {
     let range2 = moment.range([appointment.startDate, appointment.endDate]);
-    console.log(range2);
     if (range.overlaps(range2)) {
       appointmentConflicts.push(appointment.id);
     }

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { connect } from  'react-redux'
+import { setActiveDriver, setFilteredAppointments } from "../actions"
 import Paper from "@material-ui/core/Paper";
 import {
   ViewState,
@@ -27,16 +29,12 @@ import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
-  drivers,
   dropDown,
-  timeInterval,
   checkError,
   commitChanges
 } from "../helpers/SchedulerHelpers";
+import { timeInterval } from "../data/data"
 
-
-//Part A seems to be done.  next step is to get the csv working.  Check:
-// https://stackoverflow.com/questions/48760815/export-to-csv-button-in-react-table
 
 const moment = extendMoment(Moment);
 
@@ -44,7 +42,11 @@ const messages = {
   moreInformationLabel: "",
 };
 
-const SchedulerComponent = () => {
+const SchedulerComponent = (props) => {
+
+ const { activeDriver, setActiveDriver, filteredAppointments, setFilteredAppointments} = props
+  console.log(props)
+
   const [schedulerState, setSchedulerState] = useState({
     data: [],
     currentDate: new Date(),
@@ -52,12 +54,12 @@ const SchedulerComponent = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [activeDriver, setActiveDriver] = useState(drivers[0]);
+  // const [activeDriver, setActiveDriver] = useState(drivers[0]);
   const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
     timeInterval[0]
   );
 
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
+  // const [filteredAppointments, setFilteredAppointments] = useState([]);
   const [csvData, setCsvData] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
@@ -231,36 +233,7 @@ const SchedulerComponent = () => {
   return (
     <Paper>
       <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} convertData4csv={convertData4csv} />
-      {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <DropDown
-          options={drivers}
-          type="Driver"
-          active={activeDriver}
-          setActive={setActiveDriver}
-          testID="driverDropdown"
-        />
-        <div>
-          <DropDown
-            options={timeInterval}
-            type="Time Interval"
-            active={activeDriverTimeInverval}
-            setActive={setActiveDriverTimeInverval}
-            testID="timeIntervalDropdown"
-          />
-          <button
-            style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
-          >
-            <CSVLink
-              data={csvData}
-              asyncOnClick={true}
-              onClick={() => convertData4csv()}
-              filename={`${activeDriver}${activeDriverTimeInverval}interval.csv`}
-            >
-              Download Driver Tasks
-            </CSVLink>
-          </button>
-        </div> 
-      </div>*/}
+     
 
       <Scheduler data={filteredAppointments} height={760}>
         <ViewState
@@ -301,4 +274,8 @@ const SchedulerComponent = () => {
   );
 };
 
-export default SchedulerComponent;
+const mapStateToProps = (state) =>{
+  return state
+}
+
+export default connect(mapStateToProps, {setActiveDriver, setFilteredAppointments})(SchedulerComponent);

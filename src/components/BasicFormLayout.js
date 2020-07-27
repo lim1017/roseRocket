@@ -7,21 +7,18 @@ export const BasicLayout = ({
   appointmentData,
   ...restProps
 }) => {
-
-  const [selectedTask, setSelectedTask] = useState(tasks[0])
+  const [selectedTask, setSelectedTask] = useState(tasks[0]);
 
   const onCustomFieldChange = (nextValue, type) => {
     if (type === "title") {
       onFieldChange({ [type]: tasks[nextValue - 1].text, taskID: nextValue });
-      setSelectedTask(tasks[nextValue-1])
+      setSelectedTask(tasks[nextValue - 1]);
     } else onFieldChange({ [type]: nextValue });
   };
 
   useEffect(() => {
-    console.log('useeffect')
-    onFieldChange({ title: tasks[0].text, taskID:tasks[0].text.id })
-  }, [])
-  
+    onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id });
+  }, []);
 
   return (
     <div>

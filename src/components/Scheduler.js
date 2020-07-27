@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { connect } from  'react-redux'
-import { setActiveDriver, setFilteredAppointments, setActiveDriverTimeInverval, setCsvData } from "../actions"
+import { connect } from "react-redux";
+import {
+  setActiveDriver,
+  setFilteredAppointments,
+  setActiveDriverTimeInverval,
+  setCsvData,
+} from "../actions";
 import Paper from "@material-ui/core/Paper";
 import {
   ViewState,
@@ -24,7 +29,7 @@ import { extendMoment } from "moment-range";
 import { CSVLink } from "react-csv";
 
 import DropDown from "./DropDown/DropDown";
-import Header from "./Header"
+import Header from "./Header";
 import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
@@ -34,8 +39,7 @@ import {
   commitChanges,
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
-import { timeInterval } from "../data/data"
-
+import { timeInterval } from "../data/data";
 
 const moment = extendMoment(Moment);
 
@@ -44,9 +48,16 @@ const messages = {
 };
 
 const SchedulerComponent = (props) => {
-
- const { activeDriver, setActiveDriver, filteredAppointments, setFilteredAppointments, activeDriverTimeInverval,  setActiveDriverTimeInverval, csvData, setCsvData} = props
-  console.log(props)
+  const {
+    activeDriver,
+    setActiveDriver,
+    filteredAppointments,
+    setFilteredAppointments,
+    activeDriverTimeInverval,
+    setActiveDriverTimeInverval,
+    csvData,
+    setCsvData,
+  } = props;
 
   const [schedulerState, setSchedulerState] = useState({
     data: [],
@@ -70,22 +81,20 @@ const SchedulerComponent = (props) => {
 
   // const checkErrors = ({ added, changed, deleted },setSchedulerState, activeDriver) => {
   //   let checkVariable = added ? added : changed[0]
-  
+
   //   if (checkVariable.endDate == "Invalid Date" || checkVariable.startDate == "Invalid Date"){
   //     alert('Invalid date')
   //     return
   //   }
-  
+
   //   checkConflict(added, changed, deleted, setSchedulerState, activeDriver)
   // }
-  
 
   // const checkConflict = (added, changed, deleted, setSchedulerState, activeDriver) => {
   //   const appointmentConflicts = [];
   //   let range;
 
   //   console.log('inside check')
-
 
   //   if (deleted !== undefined) {
   //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
@@ -168,14 +177,32 @@ const SchedulerComponent = (props) => {
   const handleOverwrite = () => {
     //deletes old conflicting appointments
     conflictingAppointment.forEach((conflict) => {
-      commitChanges(undefined, undefined, conflict, setSchedulerState, activeDriver);
+      commitChanges(
+        undefined,
+        undefined,
+        conflict,
+        setSchedulerState,
+        activeDriver
+      );
     });
     setConflictingAppointment([]);
 
     if (activeAppointment.chgType === "changed") {
-      commitChanges(undefined, activeAppointment.appointment, undefined, setSchedulerState, activeDriver);
+      commitChanges(
+        undefined,
+        activeAppointment.appointment,
+        undefined,
+        setSchedulerState,
+        activeDriver
+      );
     } else if (activeAppointment.chgType === "added") {
-      commitChanges(activeAppointment.appointment, undefined, undefined, setSchedulerState, activeDriver);
+      commitChanges(
+        activeAppointment.appointment,
+        undefined,
+        undefined,
+        setSchedulerState,
+        activeDriver
+      );
     }
   };
 
@@ -233,8 +260,15 @@ const SchedulerComponent = (props) => {
 
   return (
     <Paper>
-      <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} setCsvData={setCsvData} convertData4csv={convertData4csv} />
-     
+      <Header
+        activeDriver={activeDriver}
+        setActiveDriver={setActiveDriver}
+        activeDriverTimeInverval={activeDriverTimeInverval}
+        setActiveDriverTimeInverval={setActiveDriverTimeInverval}
+        csvData={csvData}
+        setCsvData={setCsvData}
+        convertData4csv={convertData4csv}
+      />
 
       <Scheduler data={filteredAppointments} height={760}>
         <ViewState
@@ -242,7 +276,19 @@ const SchedulerComponent = (props) => {
           defaultCurrentViewName="Week"
         />
 
-        <EditingState onCommitChanges={(chgType)=>checkError(chgType, setSchedulerState, activeDriver, setActiveAppointment, filteredAppointments, setShowModal, setConflictingAppointment)} />
+        <EditingState
+          onCommitChanges={(chgType) =>
+            checkError(
+              chgType,
+              setSchedulerState,
+              activeDriver,
+              setActiveAppointment,
+              filteredAppointments,
+              setShowModal,
+              setConflictingAppointment
+            )
+          }
+        />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
@@ -270,13 +316,18 @@ const SchedulerComponent = (props) => {
         handleOverwrite={handleOverwrite}
         title={`Warning ${conflictingAppointment.length} conflict(s) detected`}
         msg="Overwrite conflicting appointment(s)?"
-        />
+      />
     </Paper>
   );
 };
 
-const mapStateToProps = (state) =>{
-  return state
-}
+const mapStateToProps = (state) => {
+  return state;
+};
 
-export default connect(mapStateToProps, {setActiveDriver, setFilteredAppointments, setActiveDriverTimeInverval, setCsvData })(SchedulerComponent);
+export default connect(mapStateToProps, {
+  setActiveDriver,
+  setFilteredAppointments,
+  setActiveDriverTimeInverval,
+  setCsvData,
+})(SchedulerComponent);

@@ -12,12 +12,10 @@ import { Link } from "react-router-dom";
 const faker = require("faker");
 
 function DriverProfile(props) {
-  console.log(props);
   const { activeDriver, filteredAppointments, setCsvData } = props;
   const [taskBreakdown, setTaskBreakdown] = useState({});
 
   useEffect(() => {
-    console.log("setting");
     setTaskBreakdown(convertData4csv(setCsvData, "profile"));
   }, []);
 

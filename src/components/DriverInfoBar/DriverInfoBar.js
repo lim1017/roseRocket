@@ -23,9 +23,7 @@ function DriverInfoBar(props) {
         <Col>
           <Row>
             <div class="student-name">
-              <strong>
-                {props.driver} The Truck Driver 
-              </strong>{" "}
+              <strong>{props.driver} The Truck Driver</strong>{" "}
             </div>
           </Row>
           <Row class="student-bio">

@@ -2,39 +2,25 @@ import React from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
-import { appStore } from '../store';
-
-
-
+import { appStore } from "../store";
 
 const moment = extendMoment(Moment);
-
-
-
-
-
 
 export const RemoveComponent = (props) => {
   return null;
 };
 
 export const dropDown = (props) => {
-
   return <AppointmentForm.Select {...props} />;
 };
 
-
-export const convertData4csv = (setCsvData, type ) => {
-
-
-  const globalStore = appStore.getState()
-  const { filteredAppointments, activeDriverTimeInverval } = globalStore
-  const timeInterval = type === "profile" ? 999 : activeDriverTimeInverval
-
+export const convertData4csv = (setCsvData, type) => {
+  const globalStore = appStore.getState();
+  const { filteredAppointments, activeDriverTimeInverval } = globalStore;
+  const timeInterval = type === "profile" ? 999 : activeDriverTimeInverval;
 
   setCsvData([]);
   const finalOP = [];
-  console.log(filteredAppointments)
 
   let dates = filteredAppointments.map((appointment) =>
     moment(appointment.startDate)
@@ -64,22 +50,15 @@ export const convertData4csv = (setCsvData, type ) => {
     // finalOP.slice(1)
     finalOP.forEach((timeSlot, index) => {
       let split = timeSlot.Date.split("-");
-      if (
-        moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
-      ) {
+      if (moment(convert2moment).isBetween(split[0], split[1], "days", "[]")) {
         finalOP[index][appointment.title]++;
       }
     });
   });
 
-  console.log(finalOP)
   setCsvData(finalOP);
   return finalOP;
 };
-
-
-
-
 
 export const commitChanges = (
   added,
@@ -118,7 +97,6 @@ export const checkError = (
   setShowModal,
   setConflictingAppointment
 ) => {
-
   if (deleted !== undefined) {
     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
     return;
@@ -248,6 +226,3 @@ export const checkConflict = (
     setConflictingAppointment(appointmentConflicts);
   }
 };
-
-
-

@@ -2,25 +2,62 @@ import React from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
+import { appStore } from "../store";
+
 const moment = extendMoment(Moment);
-
-export const tasks = [
-  { id: 1, text: "Pickup" },
-  { id: 2, text: "Dropoff" },
-  { id: 3, text: "Other" },
-];
-
-export const drivers = ["Bob", "Tom", "Jane"];
-
-export const timeInterval = [2, 4, 7, 14, 28];
 
 export const RemoveComponent = (props) => {
   return null;
 };
 
 export const dropDown = (props) => {
-  // eslint-disable-next-line react/destructuring-assignment
   return <AppointmentForm.Select {...props} />;
+};
+
+export const convertData4csv = (setCsvData, type) => {
+  const globalStore = appStore.getState();
+  const { filteredAppointments, activeDriverTimeInverval } = globalStore;
+  const timeInterval = type === "profile" ? 999 : activeDriverTimeInverval;
+
+  setCsvData([]);
+  const finalOP = [];
+
+  let dates = filteredAppointments.map((appointment) =>
+    moment(appointment.startDate)
+  );
+  let firstDate = moment.min(dates);
+  let lastDate = moment.max(dates);
+
+  // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
+
+  do {
+    finalOP.push({
+      Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
+        .add("days", timeInterval - 1)
+        .format("MM/DD/YYYY")}`,
+      Pickup: 0,
+      Dropoff: 0,
+      Other: 0,
+    });
+    firstDate = moment(firstDate).add("days", timeInterval);
+  } while (firstDate.isBefore(lastDate));
+
+  filteredAppointments.forEach((appointment) => {
+    let convert2moment = moment(new Date(appointment.startDate)).format(
+      "MM/DD/YYYY"
+    );
+
+    // finalOP.slice(1)
+    finalOP.forEach((timeSlot, index) => {
+      let split = timeSlot.Date.split("-");
+      if (moment(convert2moment).isBetween(split[0], split[1], "days", "[]")) {
+        finalOP[index][appointment.title]++;
+      }
+    });
+  });
+
+  setCsvData(finalOP);
+  return finalOP;
 };
 
 export const commitChanges = (
@@ -30,9 +67,7 @@ export const commitChanges = (
   setSchedulerState,
   activeDriver
 ) => {
-  console.log("inside commit");
   setSchedulerState((state) => {
-    console.log(state);
     let { data } = state;
     if (added) {
       const startingAddedId =
@@ -62,7 +97,6 @@ export const checkError = (
   setShowModal,
   setConflictingAppointment
 ) => {
-
   if (deleted !== undefined) {
     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
     return;
@@ -170,17 +204,15 @@ export const checkConflict = (
     range = moment.range([start, end]);
   }
 
-  //if editing remove that appointment from list so no conflict
-  const refilteredAppointments = added
+  const removeActiveAppointment = added
     ? filteredAppointments
     : filteredAppointments.filter(
         (appointment) => appointment.id !== chgAppointmentID
       );
 
-  //checks remaining appointment for conflicts and adds them to an []
-  refilteredAppointments.forEach((appointment) => {
+  //checks remaining appointment for conflicts and stores any conflicting ones to delete later
+  removeActiveAppointment.forEach((appointment) => {
     let range2 = moment.range([appointment.startDate, appointment.endDate]);
-    console.log(range2);
     if (range.overlaps(range2)) {
       appointmentConflicts.push(appointment.id);
     }

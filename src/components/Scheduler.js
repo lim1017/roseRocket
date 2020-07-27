@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import {
+  setActiveDriver,
+  setFilteredAppointments,
+  setActiveDriverTimeInverval,
+  setCsvData,
+} from "../actions";
 import Paper from "@material-ui/core/Paper";
 import {
   ViewState,
@@ -22,21 +29,17 @@ import { extendMoment } from "moment-range";
 import { CSVLink } from "react-csv";
 
 import DropDown from "./DropDown/DropDown";
-import Header from "./Header"
+import Header from "./Header";
 import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
-  drivers,
   dropDown,
-  timeInterval,
   checkError,
-  commitChanges
+  commitChanges,
+  convertData4csv,
 } from "../helpers/SchedulerHelpers";
-
-
-//Part A seems to be done.  next step is to get the csv working.  Check:
-// https://stackoverflow.com/questions/48760815/export-to-csv-button-in-react-table
+import { timeInterval } from "../data/data";
 
 const moment = extendMoment(Moment);
 
@@ -44,7 +47,18 @@ const messages = {
   moreInformationLabel: "",
 };
 
-const SchedulerComponent = () => {
+const SchedulerComponent = (props) => {
+  const {
+    activeDriver,
+    setActiveDriver,
+    filteredAppointments,
+    setFilteredAppointments,
+    activeDriverTimeInverval,
+    setActiveDriverTimeInverval,
+    csvData,
+    setCsvData,
+  } = props;
+
   const [schedulerState, setSchedulerState] = useState({
     data: [],
     currentDate: new Date(),
@@ -52,13 +66,13 @@ const SchedulerComponent = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [activeDriver, setActiveDriver] = useState(drivers[0]);
-  const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
-    timeInterval[0]
-  );
+  // const [activeDriver, setActiveDriver] = useState(drivers[0]);
+  // const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
+  //   timeInterval[0]
+  // );
 
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
-  const [csvData, setCsvData] = useState([]);
+  // const [filteredAppointments, setFilteredAppointments] = useState([]);
+  // const [csvData, setCsvData] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
@@ -67,22 +81,20 @@ const SchedulerComponent = () => {
 
   // const checkErrors = ({ added, changed, deleted },setSchedulerState, activeDriver) => {
   //   let checkVariable = added ? added : changed[0]
-  
+
   //   if (checkVariable.endDate == "Invalid Date" || checkVariable.startDate == "Invalid Date"){
   //     alert('Invalid date')
   //     return
   //   }
-  
+
   //   checkConflict(added, changed, deleted, setSchedulerState, activeDriver)
   // }
-  
 
   // const checkConflict = (added, changed, deleted, setSchedulerState, activeDriver) => {
   //   const appointmentConflicts = [];
   //   let range;
 
   //   console.log('inside check')
-
 
   //   if (deleted !== undefined) {
   //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
@@ -165,14 +177,32 @@ const SchedulerComponent = () => {
   const handleOverwrite = () => {
     //deletes old conflicting appointments
     conflictingAppointment.forEach((conflict) => {
-      commitChanges(undefined, undefined, conflict, setSchedulerState, activeDriver);
+      commitChanges(
+        undefined,
+        undefined,
+        conflict,
+        setSchedulerState,
+        activeDriver
+      );
     });
     setConflictingAppointment([]);
 
     if (activeAppointment.chgType === "changed") {
-      commitChanges(undefined, activeAppointment.appointment, undefined, setSchedulerState, activeDriver);
+      commitChanges(
+        undefined,
+        activeAppointment.appointment,
+        undefined,
+        setSchedulerState,
+        activeDriver
+      );
     } else if (activeAppointment.chgType === "added") {
-      commitChanges(activeAppointment.appointment, undefined, undefined, setSchedulerState, activeDriver);
+      commitChanges(
+        activeAppointment.appointment,
+        undefined,
+        undefined,
+        setSchedulerState,
+        activeDriver
+      );
     }
   };
 
@@ -184,83 +214,61 @@ const SchedulerComponent = () => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
-  const convertData4csv = () => {
-    setCsvData([]);
-    const finalOP = [];
+  // const convertData4csv = () => {
+  //   setCsvData([]);
+  //   const finalOP = [];
 
-    let dates = filteredAppointments.map((appointment) =>
-      moment(appointment.startDate)
-    );
-    let firstDate = moment.min(dates);
-    let lastDate = moment.max(dates);
+  //   let dates = filteredAppointments.map((appointment) =>
+  //     moment(appointment.startDate)
+  //   );
+  //   let firstDate = moment.min(dates);
+  //   let lastDate = moment.max(dates);
 
-    // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
+  //   // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
 
-    do {
-      finalOP.push({
-        Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
-          .add("days", activeDriverTimeInverval - 1)
-          .format("MM/DD/YYYY")}`,
-        Pickup: 0,
-        Dropoff: 0,
-        Other: 0,
-      });
-      firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
-    } while (firstDate.isBefore(lastDate));
+  //   do {
+  //     finalOP.push({
+  //       Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
+  //         .add("days", activeDriverTimeInverval - 1)
+  //         .format("MM/DD/YYYY")}`,
+  //       Pickup: 0,
+  //       Dropoff: 0,
+  //       Other: 0,
+  //     });
+  //     firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
+  //   } while (firstDate.isBefore(lastDate));
 
-    filteredAppointments.forEach((appointment) => {
-      let convert2moment = moment(new Date(appointment.startDate)).format(
-        "MM/DD/YYYY"
-      );
+  //   filteredAppointments.forEach((appointment) => {
+  //     let convert2moment = moment(new Date(appointment.startDate)).format(
+  //       "MM/DD/YYYY"
+  //     );
 
-      // finalOP.slice(1)
-      finalOP.forEach((timeSlot, index) => {
-        let split = timeSlot.Date.split("-");
-        if (
-          moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
-        ) {
-          finalOP[index][appointment.title]++;
-        }
-      });
-    });
+  //     // finalOP.slice(1)
+  //     finalOP.forEach((timeSlot, index) => {
+  //       let split = timeSlot.Date.split("-");
+  //       if (
+  //         moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
+  //       ) {
+  //         finalOP[index][appointment.title]++;
+  //       }
+  //     });
+  //   });
 
-    setCsvData(finalOP);
-    return finalOP;
-  };
+  //   setCsvData(finalOP);
+  //   return finalOP;
+  // };
 
   return (
     <Paper>
-      <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} convertData4csv={convertData4csv} />
-      {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <DropDown
-          options={drivers}
-          type="Driver"
-          active={activeDriver}
-          setActive={setActiveDriver}
-          testID="driverDropdown"
-        />
-        <div>
-          <DropDown
-            options={timeInterval}
-            type="Time Interval"
-            active={activeDriverTimeInverval}
-            setActive={setActiveDriverTimeInverval}
-            testID="timeIntervalDropdown"
-          />
-          <button
-            style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
-          >
-            <CSVLink
-              data={csvData}
-              asyncOnClick={true}
-              onClick={() => convertData4csv()}
-              filename={`${activeDriver}${activeDriverTimeInverval}interval.csv`}
-            >
-              Download Driver Tasks
-            </CSVLink>
-          </button>
-        </div> 
-      </div>*/}
+      <Header
+        activeDriver={activeDriver}
+        setActiveDriver={setActiveDriver}
+        activeDriverTimeInverval={activeDriverTimeInverval}
+        setActiveDriverTimeInverval={setActiveDriverTimeInverval}
+        csvData={csvData}
+        setCsvData={setCsvData}
+        convertData4csv={convertData4csv}
+      />
 
       <Scheduler data={filteredAppointments} height={760}>
         <ViewState
@@ -268,7 +276,19 @@ const SchedulerComponent = () => {
           defaultCurrentViewName="Week"
         />
 
-        <EditingState onCommitChanges={(chgType)=>checkError(chgType, setSchedulerState, activeDriver, setActiveAppointment, filteredAppointments, setShowModal, setConflictingAppointment)} />
+        <EditingState
+          onCommitChanges={(chgType) =>
+            checkError(
+              chgType,
+              setSchedulerState,
+              activeDriver,
+              setActiveAppointment,
+              filteredAppointments,
+              setShowModal,
+              setConflictingAppointment
+            )
+          }
+        />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
@@ -296,9 +316,18 @@ const SchedulerComponent = () => {
         handleOverwrite={handleOverwrite}
         title={`Warning ${conflictingAppointment.length} conflict(s) detected`}
         msg="Overwrite conflicting appointment(s)?"
-        />
+      />
     </Paper>
   );
 };
 
-export default SchedulerComponent;
+const mapStateToProps = (state) => {
+  return state;
+};
+
+export default connect(mapStateToProps, {
+  setActiveDriver,
+  setFilteredAppointments,
+  setActiveDriverTimeInverval,
+  setCsvData,
+})(SchedulerComponent);

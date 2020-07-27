@@ -24,11 +24,6 @@ import {
   TodayButton,
   AppointmentForm,
 } from "@devexpress/dx-react-scheduler-material-ui";
-import Moment from "moment";
-import { extendMoment } from "moment-range";
-import { CSVLink } from "react-csv";
-
-import DropDown from "./DropDown/DropDown";
 import Header from "./Header";
 import Modal from "./Modal";
 import { BasicLayout } from "./BasicFormLayout";
@@ -39,9 +34,6 @@ import {
   commitChanges,
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
-import { timeInterval } from "../data/data";
-
-const moment = extendMoment(Moment);
 
 const messages = {
   moreInformationLabel: "",
@@ -65,114 +57,11 @@ const SchedulerComponent = (props) => {
   });
 
   const [showModal, setShowModal] = useState(false);
-
-  // const [activeDriver, setActiveDriver] = useState(drivers[0]);
-  // const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
-  //   timeInterval[0]
-  // );
-
-  // const [filteredAppointments, setFilteredAppointments] = useState([]);
-  // const [csvData, setCsvData] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
     chgType: null,
   });
-
-  // const checkErrors = ({ added, changed, deleted },setSchedulerState, activeDriver) => {
-  //   let checkVariable = added ? added : changed[0]
-
-  //   if (checkVariable.endDate == "Invalid Date" || checkVariable.startDate == "Invalid Date"){
-  //     alert('Invalid date')
-  //     return
-  //   }
-
-  //   checkConflict(added, changed, deleted, setSchedulerState, activeDriver)
-  // }
-
-  // const checkConflict = (added, changed, deleted, setSchedulerState, activeDriver) => {
-  //   const appointmentConflicts = [];
-  //   let range;
-
-  //   console.log('inside check')
-
-  //   if (deleted !== undefined) {
-  //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
-  //     return;
-  //   }
-
-  //   if (added) {
-  //     setActiveAppointment({ appointment: added, chgType: "added" });
-  //     range = moment.range([added.startDate, added.endDate]);
-  //   }
-
-  //   if (changed) {
-  //     setActiveAppointment({ appointment: changed, chgType: "changed" });
-  //     var chgAppointmentID = parseInt(Object.keys(changed)[0]);
-  //     let chgAppointment = filteredAppointments.filter(
-  //       (appointment) => appointment.id === chgAppointmentID
-  //     );
-
-  //     let start = changed[chgAppointmentID].startDate
-  //       ? changed[chgAppointmentID].startDate
-  //       : chgAppointment[0].startDate;
-  //     let end = changed[chgAppointmentID].endDate
-  //       ? changed[chgAppointmentID].endDate
-  //       : chgAppointment[0].endDate;
-
-  //     range = moment.range([start, end]);
-  //   }
-
-  //   //if editing remove that appointment from list so no conflict
-  //   const refilteredAppointments = added
-  //     ? filteredAppointments
-  //     : filteredAppointments.filter(
-  //         (appointment) => appointment.id !== chgAppointmentID
-  //       );
-
-  //   //checks remaining appointment for conflicts and adds them to an []
-  //   refilteredAppointments.forEach((appointment) => {
-  //     let range2 = moment.range([appointment.startDate, appointment.endDate]);
-  //     console.log(range2);
-  //     if (range.overlaps(range2)) {
-  //       appointmentConflicts.push(appointment.id);
-  //     }
-  //   });
-
-  //   //make the appointment if no conflicts otherwise setConflicts
-  //   if (appointmentConflicts.length === 0) {
-  //     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
-  //   } else {
-  //     setShowModal(true);
-  //     setConflictingAppointment(appointmentConflicts);
-  //   }
-  // };
-
-  // const commitChanges = (added, changed, deleted) => {
-  //   setSchedulerState((state) => {
-  //     console.log(state);
-  //     let { data } = state;
-  //     if (added) {
-  //       const startingAddedId =
-  //         data.length > 0 ? data[data.length - 1].id + 1 : 0;
-  //       data = [
-  //         ...data,
-  //         { id: startingAddedId, driver: activeDriver, ...added },
-  //       ];
-  //     }
-  //     if (changed) {
-  //       data = data.map((appointment) =>
-  //         changed[appointment.id]
-  //           ? { ...appointment, ...changed[appointment.id] }
-  //           : appointment
-  //       );
-  //     }
-  //     if (deleted !== undefined) {
-  //       data = data.filter((appointment) => appointment.id !== deleted);
-  //     }
-  //     return { data };
-  //   });
-  // };
 
   const handleOverwrite = () => {
     //deletes old conflicting appointments
@@ -214,50 +103,7 @@ const SchedulerComponent = (props) => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
-  // const convertData4csv = () => {
-  //   setCsvData([]);
-  //   const finalOP = [];
-
-  //   let dates = filteredAppointments.map((appointment) =>
-  //     moment(appointment.startDate)
-  //   );
-  //   let firstDate = moment.min(dates);
-  //   let lastDate = moment.max(dates);
-
-  //   // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
-
-  //   do {
-  //     finalOP.push({
-  //       Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
-  //         .add("days", activeDriverTimeInverval - 1)
-  //         .format("MM/DD/YYYY")}`,
-  //       Pickup: 0,
-  //       Dropoff: 0,
-  //       Other: 0,
-  //     });
-  //     firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
-  //   } while (firstDate.isBefore(lastDate));
-
-  //   filteredAppointments.forEach((appointment) => {
-  //     let convert2moment = moment(new Date(appointment.startDate)).format(
-  //       "MM/DD/YYYY"
-  //     );
-
-  //     // finalOP.slice(1)
-  //     finalOP.forEach((timeSlot, index) => {
-  //       let split = timeSlot.Date.split("-");
-  //       if (
-  //         moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
-  //       ) {
-  //         finalOP[index][appointment.title]++;
-  //       }
-  //     });
-  //   });
-
-  //   setCsvData(finalOP);
-  //   return finalOP;
-  // };
-
+  console.log(filteredAppointments)
   return (
     <Paper>
       <Header

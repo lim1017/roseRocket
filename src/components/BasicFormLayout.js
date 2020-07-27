@@ -39,7 +39,7 @@ export const BasicLayout = ({
           type="noteTextEditor"
         />
 
-        <AppointmentForm.Label text="Notes" type="title" />
+        <AppointmentForm.Label text="Notes" type="notes" />
         <AppointmentForm.TextEditor
           value={appointmentData.notes}
           onValueChange={(value) => onCustomFieldChange(value, "notes")}

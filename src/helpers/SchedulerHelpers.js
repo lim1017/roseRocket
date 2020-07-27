@@ -28,8 +28,6 @@ export const convertData4csv = (setCsvData, type) => {
   let firstDate = moment.min(dates);
   let lastDate = moment.max(dates);
 
-  // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
-
   do {
     finalOP.push({
       Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
@@ -47,7 +45,6 @@ export const convertData4csv = (setCsvData, type) => {
       "MM/DD/YYYY"
     );
 
-    // finalOP.slice(1)
     finalOP.forEach((timeSlot, index) => {
       let split = timeSlot.Date.split("-");
       if (moment(convert2moment).isBetween(split[0], split[1], "days", "[]")) {
@@ -88,6 +85,8 @@ export const commitChanges = (
   });
 };
 
+
+
 export const checkError = (
   { added, changed, deleted },
   setSchedulerState,
@@ -97,6 +96,7 @@ export const checkError = (
   setShowModal,
   setConflictingAppointment
 ) => {
+  
   if (deleted !== undefined) {
     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
     return;

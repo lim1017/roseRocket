@@ -9,10 +9,8 @@ import { setCsvData } from "../../actions/";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 
-const faker = require("faker");
-
 function DriverProfile(props) {
-  const { activeDriver, filteredAppointments, setCsvData } = props;
+  const { activeDriver, setCsvData } = props;
   const [taskBreakdown, setTaskBreakdown] = useState({});
 
   useEffect(() => {

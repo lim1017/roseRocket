@@ -1,10 +1,10 @@
 import React from "react";
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import DropDown from "./DropDown/DropDown";
 import { drivers, timeInterval } from "../data/data";
 import { withRouter } from "react-router";
 import Button from "@material-ui/core/Button";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
@@ -41,7 +41,6 @@ const Header = (props) => {
             variant="contained"
             color="primary"
             style={{ height: "40px", marginTop: "2em", marginLeft: "0.2em" }}
-            // onClick={() => props.history.push(`/profile/${activeDriver}`)}
           >
             Driver Profile
           </Button>

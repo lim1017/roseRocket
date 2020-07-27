@@ -30,7 +30,7 @@ export const BasicLayout = ({
           availableOptions={tasks}
           type="filledSelect"
         />
-
+        <br />
         <AppointmentForm.Label text="Location" type="location" />
         <AppointmentForm.TextEditor
           value={appointmentData.location}
@@ -38,15 +38,16 @@ export const BasicLayout = ({
           placeholder="Location"
           type="noteTextEditor"
         />
-
+        <br />
         <AppointmentForm.Label text="Notes" type="notes" />
         <AppointmentForm.TextEditor
           value={appointmentData.notes}
           onValueChange={(value) => onCustomFieldChange(value, "notes")}
           placeholder="Additional Details"
-          type="noteTextEditor"
+          type="multilineTextEditor"
         />
       </div>
+      
 
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}

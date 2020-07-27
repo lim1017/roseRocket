@@ -30,14 +30,11 @@ import { BasicLayout } from "./BasicFormLayout";
 import {
   RemoveComponent,
   dropDown,
+  customizeLabel,
   checkError,
   commitChanges,
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
-
-const messages = {
-  moreInformationLabel: "",
-};
 
 const SchedulerComponent = (props) => {
   const {
@@ -95,6 +92,10 @@ const SchedulerComponent = (props) => {
     }
   };
 
+  const messages = {
+    moreInformationLabel: '',
+  };
+
   useEffect(() => {
     const filteredAppointments = schedulerState.data.filter(
       (appointment) => appointment.driver === activeDriver
@@ -103,7 +104,6 @@ const SchedulerComponent = (props) => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
-  console.log(filteredAppointments)
   return (
     <Paper>
       <Header
@@ -152,6 +152,7 @@ const SchedulerComponent = (props) => {
           selectComponent={dropDown}
           textEditorComponent={RemoveComponent}
           booleanEditorComponent={RemoveComponent}
+          labelComponent={customizeLabel}
           messages={messages}
         />
       </Scheduler>

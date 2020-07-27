@@ -6,13 +6,27 @@ import { appStore } from "../store";
 
 const moment = extendMoment(Moment);
 
+
+
 export const RemoveComponent = (props) => {
   return null;
 };
 
+
+
 export const dropDown = (props) => {
   return <AppointmentForm.Select {...props} />;
 };
+
+export const customizeLabel = (props) => {
+    
+  if (props.text === "Details"){
+    return <AppointmentForm.Label text="Time
+    " type="title" />
+  } return <AppointmentForm.Label {...props} />
+}
+
+
 
 export const convertData4csv = (setCsvData, type) => {
   const globalStore = appStore.getState();
@@ -105,8 +119,8 @@ export const checkError = (
   let checkVariable = added ? added : changed[Object.keys(changed)[0]];
 
   if (
-    checkVariable.endDate == "Invalid Date" ||
-    checkVariable.startDate == "Invalid Date"
+    checkVariable.endDate === "Invalid Date" ||
+    checkVariable.startDate === "Invalid Date"
   ) {
     alert("Invalid date");
     return;
@@ -226,3 +240,5 @@ export const checkConflict = (
     setConflictingAppointment(appointmentConflicts);
   }
 };
+
+

@@ -15,3 +15,18 @@ export const setFilteredAppointments = (newAppointments) =>{
     payload: newAppointments
   }
 }
+
+export const setActiveDriverTimeInverval = (newTimeInt) =>{
+  return {
+    type: "setActiveDriverTimeInverval",
+    payload: newTimeInt
+  }
+}
+
+
+export const setCsvData = (csvData) =>{
+  return {
+    type: "setCsvData",
+    payload: csvData
+  }
+}

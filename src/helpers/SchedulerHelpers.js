@@ -2,7 +2,16 @@ import React from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
+import { appStore } from '../store';
+
+
+
+
 const moment = extendMoment(Moment);
+
+
+
+
 
 
 export const RemoveComponent = (props) => {
@@ -10,8 +19,67 @@ export const RemoveComponent = (props) => {
 };
 
 export const dropDown = (props) => {
+
   return <AppointmentForm.Select {...props} />;
 };
+
+
+export const convertData4csv = (setCsvData, type ) => {
+
+
+  const globalStore = appStore.getState()
+  const { filteredAppointments, activeDriverTimeInverval } = globalStore
+  const timeInterval = type === "profile" ? 999 : activeDriverTimeInverval
+
+
+  setCsvData([]);
+  const finalOP = [];
+  console.log(filteredAppointments)
+
+  let dates = filteredAppointments.map((appointment) =>
+    moment(appointment.startDate)
+  );
+  let firstDate = moment.min(dates);
+  let lastDate = moment.max(dates);
+
+  // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
+
+  do {
+    finalOP.push({
+      Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
+        .add("days", timeInterval - 1)
+        .format("MM/DD/YYYY")}`,
+      Pickup: 0,
+      Dropoff: 0,
+      Other: 0,
+    });
+    firstDate = moment(firstDate).add("days", timeInterval);
+  } while (firstDate.isBefore(lastDate));
+
+  filteredAppointments.forEach((appointment) => {
+    let convert2moment = moment(new Date(appointment.startDate)).format(
+      "MM/DD/YYYY"
+    );
+
+    // finalOP.slice(1)
+    finalOP.forEach((timeSlot, index) => {
+      let split = timeSlot.Date.split("-");
+      if (
+        moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
+      ) {
+        finalOP[index][appointment.title]++;
+      }
+    });
+  });
+
+  console.log(finalOP)
+  setCsvData(finalOP);
+  return finalOP;
+};
+
+
+
+
 
 export const commitChanges = (
   added,
@@ -180,3 +248,6 @@ export const checkConflict = (
     setConflictingAppointment(appointmentConflicts);
   }
 };
+
+
+

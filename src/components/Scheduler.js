@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from  'react-redux'
-import { setActiveDriver, setFilteredAppointments } from "../actions"
+import { setActiveDriver, setFilteredAppointments, setActiveDriverTimeInverval, setCsvData } from "../actions"
 import Paper from "@material-ui/core/Paper";
 import {
   ViewState,
@@ -31,7 +31,8 @@ import {
   RemoveComponent,
   dropDown,
   checkError,
-  commitChanges
+  commitChanges,
+  convertData4csv,
 } from "../helpers/SchedulerHelpers";
 import { timeInterval } from "../data/data"
 
@@ -44,7 +45,7 @@ const messages = {
 
 const SchedulerComponent = (props) => {
 
- const { activeDriver, setActiveDriver, filteredAppointments, setFilteredAppointments} = props
+ const { activeDriver, setActiveDriver, filteredAppointments, setFilteredAppointments, activeDriverTimeInverval,  setActiveDriverTimeInverval, csvData, setCsvData} = props
   console.log(props)
 
   const [schedulerState, setSchedulerState] = useState({
@@ -55,12 +56,12 @@ const SchedulerComponent = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   // const [activeDriver, setActiveDriver] = useState(drivers[0]);
-  const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
-    timeInterval[0]
-  );
+  // const [activeDriverTimeInverval, setActiveDriverTimeInverval] = useState(
+  //   timeInterval[0]
+  // );
 
   // const [filteredAppointments, setFilteredAppointments] = useState([]);
-  const [csvData, setCsvData] = useState([]);
+  // const [csvData, setCsvData] = useState([]);
   const [conflictingAppointment, setConflictingAppointment] = useState([]);
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
@@ -186,53 +187,53 @@ const SchedulerComponent = (props) => {
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
 
-  const convertData4csv = () => {
-    setCsvData([]);
-    const finalOP = [];
+  // const convertData4csv = () => {
+  //   setCsvData([]);
+  //   const finalOP = [];
 
-    let dates = filteredAppointments.map((appointment) =>
-      moment(appointment.startDate)
-    );
-    let firstDate = moment.min(dates);
-    let lastDate = moment.max(dates);
+  //   let dates = filteredAppointments.map((appointment) =>
+  //     moment(appointment.startDate)
+  //   );
+  //   let firstDate = moment.min(dates);
+  //   let lastDate = moment.max(dates);
 
-    // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
+  //   // finalOP.push({Driver:activeDriver, interval:activeDriverTimeInverval})
 
-    do {
-      finalOP.push({
-        Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
-          .add("days", activeDriverTimeInverval - 1)
-          .format("MM/DD/YYYY")}`,
-        Pickup: 0,
-        Dropoff: 0,
-        Other: 0,
-      });
-      firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
-    } while (firstDate.isBefore(lastDate));
+  //   do {
+  //     finalOP.push({
+  //       Date: `${firstDate.format("MM/DD/YYYY")}-${moment(firstDate)
+  //         .add("days", activeDriverTimeInverval - 1)
+  //         .format("MM/DD/YYYY")}`,
+  //       Pickup: 0,
+  //       Dropoff: 0,
+  //       Other: 0,
+  //     });
+  //     firstDate = moment(firstDate).add("days", activeDriverTimeInverval);
+  //   } while (firstDate.isBefore(lastDate));
 
-    filteredAppointments.forEach((appointment) => {
-      let convert2moment = moment(new Date(appointment.startDate)).format(
-        "MM/DD/YYYY"
-      );
+  //   filteredAppointments.forEach((appointment) => {
+  //     let convert2moment = moment(new Date(appointment.startDate)).format(
+  //       "MM/DD/YYYY"
+  //     );
 
-      // finalOP.slice(1)
-      finalOP.forEach((timeSlot, index) => {
-        let split = timeSlot.Date.split("-");
-        if (
-          moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
-        ) {
-          finalOP[index][appointment.title]++;
-        }
-      });
-    });
+  //     // finalOP.slice(1)
+  //     finalOP.forEach((timeSlot, index) => {
+  //       let split = timeSlot.Date.split("-");
+  //       if (
+  //         moment(convert2moment).isBetween(split[0], split[1], "days", "[]")
+  //       ) {
+  //         finalOP[index][appointment.title]++;
+  //       }
+  //     });
+  //   });
 
-    setCsvData(finalOP);
-    return finalOP;
-  };
+  //   setCsvData(finalOP);
+  //   return finalOP;
+  // };
 
   return (
     <Paper>
-      <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} convertData4csv={convertData4csv} />
+      <Header activeDriver={activeDriver} setActiveDriver={setActiveDriver} activeDriverTimeInverval={activeDriverTimeInverval} setActiveDriverTimeInverval={setActiveDriverTimeInverval} csvData={csvData} setCsvData={setCsvData} convertData4csv={convertData4csv} />
      
 
       <Scheduler data={filteredAppointments} height={760}>
@@ -278,4 +279,4 @@ const mapStateToProps = (state) =>{
   return state
 }
 
-export default connect(mapStateToProps, {setActiveDriver, setFilteredAppointments})(SchedulerComponent);
+export default connect(mapStateToProps, {setActiveDriver, setFilteredAppointments, setActiveDriverTimeInverval, setCsvData })(SchedulerComponent);

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { drivers } from '../data/data'
+import { drivers, timeInterval } from '../data/data'
 
 //reducers
 
@@ -19,7 +19,26 @@ const filteredAppointmentsReducer = (filteredAppointments = [], action ) =>{
   return filteredAppointments
 }
 
+
+const activeDriverTimeInvervalReducer = (activeDriverTimeInverval = timeInterval[0], action ) =>{
+  if (action.type === "setActiveDriverTimeInverval"){
+    return action.payload
+  }
+
+  return activeDriverTimeInverval
+}
+
+const csvDataReducer = (csvData = [], action ) =>{
+  if (action.type === "setCsvData"){
+    return action.payload
+  }
+
+  return csvData
+}
+
 export default combineReducers({
   activeDriver: activeDriverReducer,
-  filteredAppointments: filteredAppointmentsReducer
+  filteredAppointments: filteredAppointmentsReducer,
+  activeDriverTimeInverval: activeDriverTimeInvervalReducer,
+  csvData: csvDataReducer
 })

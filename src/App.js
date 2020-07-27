@@ -1,13 +1,44 @@
 import React from 'react';
-import './App.css';
 import Scheduler from './components/Scheduler'
+import DriverProfile from "./components/DriverProfile/DriverProfile"
+import { connect } from  'react-redux'
 
-function App() {
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
+function App(props) {
+
+  console.log(props)
   return (
+    <Router>
+
+        <Switch>
+          <Route exact path="/">
+            <Scheduler />
+          </Route>
+
+          <Route path={`/profile/:driver`}>
+            <DriverProfile />
+          </Route>
+        </Switch>
+
+
     <div className="App">
-      <Scheduler />
+      
     </div>
+
+    </Router>
   );
 }
 
-export default App;
+const mapStateToProps = (state) =>{
+  return state
+}
+
+
+export default connect(mapStateToProps)(App);

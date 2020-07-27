@@ -1,16 +1,31 @@
 import React from "react";
-import { CSVLink } from "react-csv";
+import { CSVLink, CSVDownload } from "react-csv";
 import DropDown from "./DropDown/DropDown";
 import { drivers, timeInterval } from "../data/data";
+import { withRouter } from "react-router";
+import Button from "@material-ui/core/Button";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
-const Header = ({
-  activeDriver,
-  setActiveDriver,
-  activeDriverTimeInverval,
-  setActiveDriverTimeInverval,
-  csvData,
-  convertData4csv,
-}) => {
+
+const useStyles = makeStyles(() => ({
+  text: {
+    color: "white" 
+  }
+}));
+
+const Header = (props) => {
+  const {
+    activeDriver,
+    setActiveDriver,
+    activeDriverTimeInverval,
+    setActiveDriverTimeInverval,
+    csvData,
+    setCsvData,
+    convertData4csv,
+  } = props
+
+  const classes = useStyles();
+
   return (
     <div style={{ display: "flex", justifyContent: "space-between" }}>
       <div>
@@ -21,10 +36,32 @@ const Header = ({
         setActive={setActiveDriver}
         testID="driverDropdown"
       />
-      <button style={{ height: "30px", marginTop: "2em", marginLeft: "0.2em" }}>Driver Profile</button>
+      <Button 
+      variant="contained"
+      color="primary"
+      style={{ height: "40px", marginTop: "2em", marginLeft: "0.2em" }}
+      onClick={() => props.history.push(`/profile/${activeDriver}`)}
+      >
+      Driver Profile
+      </Button>
       </div>
 
       <div>
+      <Button
+          variant="contained"
+          color="primary"
+          style={{ height: "40px", marginTop: "2em", marginRight: "0.2em" }}
+        >
+          <CSVLink
+            className={classes.text}
+            data={csvData}
+            asyncOnClick={true}
+            onClick={() => convertData4csv(setCsvData)}
+            filename={`${activeDriver}${activeDriverTimeInverval}interval.csv`}
+          >
+            Download Driver Tasks
+          </CSVLink>
+        </Button>
         <DropDown
           options={timeInterval}
           type="Time Interval"
@@ -32,21 +69,9 @@ const Header = ({
           setActive={setActiveDriverTimeInverval}
           testID="timeIntervalDropdown"
         />
-        <button
-          style={{ height: "30px", marginTop: "2em", marginRight: "2em" }}
-        >
-          <CSVLink
-            data={csvData}
-            asyncOnClick={true}
-            onClick={() => convertData4csv()}
-            filename={`${activeDriver}${activeDriverTimeInverval}interval.csv`}
-          >
-            Download Driver Tasks
-          </CSVLink>
-        </button>
       </div>
     </div>
   );
 };
 
-export default Header;
+export default withRouter(Header);

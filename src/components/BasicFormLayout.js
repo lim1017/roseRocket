@@ -10,6 +10,7 @@ export const BasicLayout = ({
   const [selectedTask, setSelectedTask] = useState(tasks[0]);
 
   const onCustomFieldChange = (nextValue, type) => {
+    console.log(appointmentData)
     if (type === "title") {
       onFieldChange({ [type]: tasks[nextValue - 1].text, taskID: nextValue });
       setSelectedTask(tasks[nextValue - 1]);
@@ -17,7 +18,7 @@ export const BasicLayout = ({
   };
 
   useEffect(() => {
-    onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id });
+    onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id, allDay: false });
   }, []);
 
   return (
@@ -54,6 +55,14 @@ export const BasicLayout = ({
         onFieldChange={onFieldChange}
         {...restProps}
       ></AppointmentForm.BasicLayout>
+<div style={{ width: "90%", margin: "auto" }}>
+    <AppointmentForm.BooleanEditor 
+      label="All Day" 
+      value={appointmentData.allDay} 
+      onValueChange={(value) => onCustomFieldChange(value, "allDay")} 
+      readOnly={true}
+      />
+      </div>
     </div>
   );
 };

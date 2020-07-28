@@ -1,8 +1,8 @@
 import React from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
+import { appStore } from "../store";
 import Moment from "moment";
 import { extendMoment } from "moment-range";
-import { appStore } from "../store";
 
 const moment = extendMoment(Moment);
 

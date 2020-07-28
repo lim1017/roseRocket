@@ -139,7 +139,7 @@ const SchedulerComponent = (props) => {
 
         <DayView startDayHour={0} endDayHour={24} />
         <WeekView startDayHour={0} endDayHour={24} />
-        <MonthView startDayHour={10} endDayHour={19} />
+        <MonthView />
 
         <Toolbar />
         <DateNavigator />
@@ -153,6 +153,7 @@ const SchedulerComponent = (props) => {
           textEditorComponent={RemoveComponent}
           booleanEditorComponent={RemoveComponent}
           labelComponent={customizeLabel}
+          // dateEditorComponent={customizeDateFields}
           messages={messages}
         />
       </Scheduler>

@@ -6,27 +6,26 @@ import { appStore } from "../store";
 
 const moment = extendMoment(Moment);
 
-
-
 export const RemoveComponent = (props) => {
   return null;
 };
-
-
 
 export const dropDown = (props) => {
   return <AppointmentForm.Select {...props} />;
 };
 
 export const customizeLabel = (props) => {
-    
-  if (props.text === "Details"){
-    return <AppointmentForm.Label text="Time
-    " type="title" />
-  } return <AppointmentForm.Label {...props} />
-}
-
-
+  if (props.text === "Details") {
+    return (
+      <AppointmentForm.Label
+        text="Time
+    "
+        type="title"
+      />
+    );
+  }
+  return <AppointmentForm.Label {...props} />;
+};
 
 export const convertData4csv = (setCsvData, type) => {
   const globalStore = appStore.getState();
@@ -52,7 +51,7 @@ export const convertData4csv = (setCsvData, type) => {
       Other: 0,
     });
     firstDate = moment(firstDate).add("days", timeInterval);
-  } while (firstDate.isBefore(lastDate));
+  } while (firstDate.isSameOrBefore(lastDate));
 
   filteredAppointments.forEach((appointment) => {
     let convert2moment = moment(new Date(appointment.startDate)).format(
@@ -99,8 +98,6 @@ export const commitChanges = (
   });
 };
 
-
-
 export const checkError = (
   { added, changed, deleted },
   setSchedulerState,
@@ -110,7 +107,6 @@ export const checkError = (
   setShowModal,
   setConflictingAppointment
 ) => {
-  
   if (deleted !== undefined) {
     commitChanges(added, changed, deleted, setSchedulerState, activeDriver);
     return;
@@ -127,6 +123,7 @@ export const checkError = (
   }
 
   if (changed && checkVariable.endDate) {
+
     if (
       moment(checkVariable.endDate).isBefore(
         filteredAppointments[Object.keys(changed)[0]].startDate,
@@ -134,6 +131,11 @@ export const checkError = (
       )
     ) {
       alert("End date is before start");
+      return;
+    }
+
+    if (moment(checkVariable.endDate).format("MMM Do YY") !== moment(filteredAppointments[Object.keys(changed)[0]].startDate).format("MMM Do YY")){
+      alert("Appointment should not span mutiple days");
       return;
     }
   }
@@ -148,6 +150,13 @@ export const checkError = (
       alert("Start date is after end");
       return;
     }
+
+    if (moment(checkVariable.startDate).format("MMM Do YY") !== moment(filteredAppointments[Object.keys(changed)[0]].endDate).format("MMM Do YY")){
+      alert("Appointment should not span mutiple days");
+      return;
+    }
+
+  
   }
 
   if (added && checkVariable.endDate) {
@@ -155,11 +164,22 @@ export const checkError = (
       alert("End date is before start");
       return;
     }
+
+    if (moment(checkVariable.endDate).format("MMM Do YY") !== moment(added.startDate).format("MMM Do YY")){
+      alert("Appointment should not span mutiple days");
+      return;
+    }
+
   }
 
   if (added && checkVariable.startDate) {
     if (moment(checkVariable.startDate).isAfter(added.endDate, "second")) {
       alert("Start date is after end");
+      return;
+    }
+
+    if (moment(checkVariable.startDate).format("MMM Do YY") !== moment(added.endDate).format("MMM Do YY")){
+      alert("Appointment should not span mutiple days");
       return;
     }
   }
@@ -240,5 +260,3 @@ export const checkConflict = (
     setConflictingAppointment(appointmentConflicts);
   }
 };
-
-

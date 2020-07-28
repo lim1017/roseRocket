@@ -41,7 +41,6 @@ import { extendMoment } from "moment-range";
 
 const moment = extendMoment(Moment);
 
-
 const SchedulerComponent = (props) => {
   const {
     activeDriver,
@@ -65,32 +64,33 @@ const SchedulerComponent = (props) => {
     appointment: null,
     chgType: null,
     appointmentChanges: {},
-    editingAppointmentId: undefined
-
+    editingAppointmentId: undefined,
   });
 
-
   const changeAddedAppointment = (addedAppointment) => {
-    console.log(addedAppointment)
-    // const nextAddedAppointment = !moment(addedAppointment.startDate).isSame(
-    //   addedAppointment.endDate,
-    //   "day"
-    // )
-    //   ? {
-    //       ...addedAppointment,
-    //       endDate: moment(addedAppointment.startDate)
-    //         .add(30, "minutes")
-    //         .toDate()
-    //     }
-    //   : addedAppointment;
+    const nextAddedAppointment =
+      !moment(addedAppointment.startDate).isSame(
+        addedAppointment.endDate,
+        "day"
+      ) &&
+      moment(addedAppointment.startDate).isSame(
+        addedAppointment.endDate,
+        "year"
+      )
+        ? {
+            ...addedAppointment,
+            endDate: moment(addedAppointment.startDate)
+              .add(60, "minutes")
+              .toDate(),
+          }
+        : addedAppointment;
 
-    const chgAddedAppointment = {...addedAppointment, endDate: moment(addedAppointment.startDate).add(30, "minutes").toDate() }
-    console.log(chgAddedAppointment)
-      setActiveAppointment({ appointment: chgAddedAppointment, chgType:"added" });
-  }
-
- 
-
+    setActiveAppointment({
+      ...activeAppointment,
+      appointment: nextAddedAppointment,
+      chgType: "added",
+    });
+  };
 
   const handleOverwrite = () => {
     //deletes old conflicting appointments
@@ -125,7 +125,7 @@ const SchedulerComponent = (props) => {
   };
 
   const messages = {
-    moreInformationLabel: '',
+    moreInformationLabel: "",
   };
 
   useEffect(() => {
@@ -135,8 +135,6 @@ const SchedulerComponent = (props) => {
 
     setFilteredAppointments(filteredAppointments);
   }, [activeDriver, schedulerState]);
-
-  
 
   return (
     <Paper>
@@ -170,13 +168,11 @@ const SchedulerComponent = (props) => {
           }
           onAddedAppointmentChange={changeAddedAppointment}
           addedAppointment={activeAppointment.appointment}
-
-
         />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
-        <WeekView startDayHour={0} endDayHour={24} />
+        <WeekView startDayHour={0} endDayHour={24} cellDuration={60} />
         <MonthView />
 
         <Toolbar />

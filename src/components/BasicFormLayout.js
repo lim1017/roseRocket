@@ -10,7 +10,6 @@ export const BasicLayout = ({
   const [selectedTask, setSelectedTask] = useState(tasks[0]);
 
   const onCustomFieldChange = (nextValue, type) => {
-    console.log(appointmentData)
     if (type === "title") {
       onFieldChange({ [type]: tasks[nextValue - 1].text, taskID: nextValue });
       setSelectedTask(tasks[nextValue - 1]);

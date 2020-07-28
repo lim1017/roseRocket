@@ -36,6 +36,11 @@ import {
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
 
+import Moment from "moment";
+import { extendMoment } from "moment-range";
+
+const moment = extendMoment(Moment);
+
 const SchedulerComponent = (props) => {
   const {
     activeDriver,
@@ -58,7 +63,34 @@ const SchedulerComponent = (props) => {
   const [activeAppointment, setActiveAppointment] = useState({
     appointment: null,
     chgType: null,
+    appointmentChanges: {},
+    editingAppointmentId: undefined,
   });
+
+  const changeAddedAppointment = (addedAppointment) => {
+    const nextAddedAppointment =
+      !moment(addedAppointment.startDate).isSame(
+        addedAppointment.endDate,
+        "day"
+      ) &&
+      moment(addedAppointment.startDate).isSame(
+        addedAppointment.endDate,
+        "year"
+      )
+        ? {
+            ...addedAppointment,
+            endDate: moment(addedAppointment.startDate)
+              .add(60, "minutes")
+              .toDate(),
+          }
+        : addedAppointment;
+
+    setActiveAppointment({
+      ...activeAppointment,
+      appointment: nextAddedAppointment,
+      chgType: "added",
+    });
+  };
 
   const handleOverwrite = () => {
     //deletes old conflicting appointments
@@ -93,7 +125,7 @@ const SchedulerComponent = (props) => {
   };
 
   const messages = {
-    moreInformationLabel: '',
+    moreInformationLabel: "",
   };
 
   useEffect(() => {
@@ -134,11 +166,13 @@ const SchedulerComponent = (props) => {
               setConflictingAppointment
             )
           }
+          onAddedAppointmentChange={changeAddedAppointment}
+          addedAppointment={activeAppointment.appointment}
         />
         <IntegratedEditing />
 
         <DayView startDayHour={0} endDayHour={24} />
-        <WeekView startDayHour={0} endDayHour={24} />
+        <WeekView startDayHour={0} endDayHour={24} cellDuration={60} />
         <MonthView />
 
         <Toolbar />
@@ -153,7 +187,6 @@ const SchedulerComponent = (props) => {
           textEditorComponent={RemoveComponent}
           booleanEditorComponent={RemoveComponent}
           labelComponent={customizeLabel}
-          // dateEditorComponent={customizeDateFields}
           messages={messages}
         />
       </Scheduler>

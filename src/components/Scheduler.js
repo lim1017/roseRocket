@@ -68,7 +68,7 @@ const SchedulerComponent = (props) => {
   });
 
   const changeAddedAppointment = (addedAppointment) => {
-    const nextAddedAppointment =
+    const set60MinIntervalMonthly =
       !moment(addedAppointment.startDate).isSame(
         addedAppointment.endDate,
         "day"
@@ -87,7 +87,7 @@ const SchedulerComponent = (props) => {
 
     setActiveAppointment({
       ...activeAppointment,
-      appointment: nextAddedAppointment,
+      appointment: set60MinIntervalMonthly,
       chgType: "added",
     });
   };

@@ -3,7 +3,7 @@ import Scheduler from "./components/Scheduler";
 import DriverProfile from "./components/DriverProfile/DriverProfile";
 import { connect } from "react-redux";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App(props) {
   return (
@@ -11,6 +11,7 @@ function App(props) {
       <Switch>
         <Route exact path="/">
           <Scheduler />
+          <h1 style={{display:"flex", justifyContent:"center"}}>Double click to add a task</h1>
         </Route>
 
         <Route path={`/profile/:driver`}>

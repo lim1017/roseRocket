@@ -23,6 +23,8 @@ import {
   DateNavigator,
   TodayButton,
   AppointmentForm,
+  ConfirmationDialog,
+  AppointmentTooltip
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Header from "./Header";
 import Modal from "./Modal";
@@ -178,9 +180,12 @@ const SchedulerComponent = (props) => {
         <Toolbar />
         <DateNavigator />
         <TodayButton />
+        <ConfirmationDialog />
+
 
         <ViewSwitcher />
         <Appointments />
+        <AppointmentTooltip showOpenButton showDeleteButton />
         <AppointmentForm
           basicLayoutComponent={BasicLayout}
           selectComponent={dropDown}

@@ -23,6 +23,7 @@ context("Actions", () => {
     cy.get(".VerticalAppointment-content-471").should("not.exist");
   });
 
+
   it("Create two appointments, Swap drivers, then check Bobs Profile", () => {
     cy.get(".MuiTableBody-root > :nth-child(2) > :nth-child(2)").dblclick();
     cy.contains("Save").click();
@@ -41,7 +42,6 @@ context("Actions", () => {
       .should("contain", "Dropoff");
 
     cy.get("[data-testid=driverDropdown]").click();
-    //select driver2
     cy.get("[data-testid=driverDropdown1]").click();
 
     cy.get(".AppointmentsContainer-container-411")
@@ -52,7 +52,6 @@ context("Actions", () => {
       .should("not.contain", "Dropoff");
 
     cy.get("[data-testid=driverDropdown]").click();
-    //select driver1 again
     cy.get("[data-testid=driverDropdown0]").click();
 
     cy.get(".AppointmentsContainer-container-411")

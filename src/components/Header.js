@@ -35,7 +35,6 @@ const Header = (props) => {
           active={activeDriver}
           setActive={setActiveDriver}
           testID="driverDropdown"
-          // data-cy="driverDropdown"
           data-cy="driverDropdown"
 
         />

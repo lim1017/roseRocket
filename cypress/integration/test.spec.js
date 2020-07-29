@@ -1,6 +1,6 @@
 context("Actions", () => {
   beforeEach(() => {
-    cy.visit("http://localhost:3000/");
+    cy.visit("https://tomlimroserocket.netlify.app/");
   });
 
   it("Create an appointment, check data is saved properly, then delete", () => {
@@ -9,18 +9,19 @@ context("Actions", () => {
     cy.get("[data-cy=dropDown").click();
     cy.get('[data-value="2"]').click();
     cy.get("[data-cy=notes]").find("textarea").type("raining today");
-
     cy.contains("Save").click();
-    cy.get(".VerticalAppointment-content-471").dblclick();
 
+    //click appointment obj
+    cy.get('.jss297').dblclick();
     cy.get("[data-cy=location]").find("input").should("have.value", "Toronto");
     cy.get("[data-cy=dropDown]").find("input").should("have.value", "2");
     cy.get("[data-cy=notes]")
       .find("textarea")
       .should("have.value", "raining today");
 
-    cy.get(".memo-button-480").click();
-    cy.get(".VerticalAppointment-content-471").should("not.exist");
+    //click delete button
+    cy.get('.jss314 > .MuiIconButton-label > .MuiSvgIcon-root').click();
+    cy.get('.jss297').should("not.exist");
   });
 
 
@@ -34,30 +35,30 @@ context("Actions", () => {
 
     cy.contains("Save").click();
 
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("contain", "Pickup");
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("contain", "Dropoff");
 
     cy.get("[data-testid=driverDropdown]").click();
     cy.get("[data-testid=driverDropdown1]").click();
 
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("not.contain", "Pickup");
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("not.contain", "Dropoff");
 
     cy.get("[data-testid=driverDropdown]").click();
     cy.get("[data-testid=driverDropdown0]").click();
 
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("contain", "Pickup");
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get(".jss29")
       .find("div")
       .should("contain", "Dropoff");
 
@@ -71,7 +72,7 @@ context("Actions", () => {
     cy.get("[data-cy=dropDown").click();
     cy.get('[data-value="2"]').click();
     cy.contains("Save").click();
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get('.jss297')
       .find("div")
       .should("contain", "Dropoff");
 
@@ -85,10 +86,10 @@ context("Actions", () => {
 
     cy.get("[data-cy=yesConflictBtn]").click();
 
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get('.jss297')
       .find("div")
       .should("not.contain", "Dropoff");
-    cy.get(".AppointmentsContainer-container-411")
+    cy.get('.jss297')
       .find("div")
       .should("contain", "Pickup");
   });

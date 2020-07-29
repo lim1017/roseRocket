@@ -13,7 +13,6 @@ function DriverInfoBar(props) {
           <img
             className="profile-pic"
             src={faker.image.avatar()}
-            // src='https://i.pravatar.cc/300'
             alt="Girl in a jacket"
             width="125px"
             height="125px"

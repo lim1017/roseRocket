@@ -1,9 +1,13 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Deployed at
+https://tomlimroserocket.netlify.app/
+
+
 ## To start App for the first time
 
 In the project directory, you can run:
-npm install 
+npm install (once only)
 npm start
 
 Runs the app in the development mode.<br />
@@ -21,7 +25,9 @@ yarn run cypress open
 
 
 ### Notes:
-I believe I have fullfilled all the requirements 
+- I believe I have fullfilled all the requirements 
+
+- I have implemented Redux, to share some data between pages.  Although I recoginze this is not necessary, I recently took a React/Redux course and figured this would be a good opportuinty to practice. 
 
 ### Part A
 - There are three (3) drivers, and scheduler will only display the tasks of the active driver.

@@ -1,32 +1,29 @@
 //action create
 
-
-export const setActiveDriver = (newDriver) =>{
+export const setActiveDriver = (newDriver) => {
   return {
     type: "setActiveDriver",
-    payload: newDriver
-  }
-}
+    payload: newDriver,
+  };
+};
 
-
-export const setFilteredAppointments = (newAppointments) =>{
+export const setFilteredAppointments = (newAppointments) => {
   return {
     type: "setFilteredAppointments",
-    payload: newAppointments
-  }
-}
+    payload: newAppointments,
+  };
+};
 
-export const setActiveDriverTimeInverval = (newTimeInt) =>{
+export const setActiveDriverTimeInverval = (newTimeInt) => {
   return {
     type: "setActiveDriverTimeInverval",
-    payload: newTimeInt
-  }
-}
+    payload: newTimeInt,
+  };
+};
 
-
-export const setCsvData = (csvData) =>{
+export const setCsvData = (csvData) => {
   return {
     type: "setCsvData",
-    payload: csvData
-  }
-}
+    payload: csvData,
+  };
+};

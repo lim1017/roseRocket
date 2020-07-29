@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AppointmentForm } from "@devexpress/dx-react-scheduler-material-ui";
 import { tasks } from "../data/data";
 
 export const BasicLayout = ({
   onFieldChange,
   appointmentData,
-  ...restProps 
+  ...restProps
 }) => {
   const [selectedTask, setSelectedTask] = useState(tasks[0]);
 
@@ -15,10 +15,6 @@ export const BasicLayout = ({
       setSelectedTask(tasks[nextValue - 1]);
     } else onFieldChange({ [type]: nextValue });
   };
-
-  // useEffect(() => {
-  //   onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id, allDay: false });
-  // }, []);
 
   return (
     <div>
@@ -50,20 +46,19 @@ export const BasicLayout = ({
           type="multilineTextEditor"
         />
       </div>
-      
 
       <AppointmentForm.BasicLayout
         appointmentData={appointmentData}
         onFieldChange={onFieldChange}
         {...restProps}
       ></AppointmentForm.BasicLayout>
-<div style={{ width: "90%", margin: "auto" }}>
-    <AppointmentForm.BooleanEditor 
-      label="All Day" 
-      value={appointmentData.allDay} 
-      onValueChange={(value) => onCustomFieldChange(value, "allDay")} 
-      readOnly={true}
-      />
+      <div style={{ width: "90%", margin: "auto" }}>
+        <AppointmentForm.BooleanEditor
+          label="All Day"
+          value={appointmentData.allDay}
+          onValueChange={(value) => onCustomFieldChange(value, "allDay")}
+          readOnly={true}
+        />
       </div>
     </div>
   );

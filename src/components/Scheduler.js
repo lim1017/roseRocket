@@ -102,7 +102,6 @@ const SchedulerComponent = (props) => {
   };
 
   const handleOverwrite = () => {
-    //deletes old conflicting appointments
     conflictingAppointment.forEach((conflict) => {
       commitChanges(
         undefined,

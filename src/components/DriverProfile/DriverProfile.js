@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import "./DriverProfile.css";
 import DriverInfoBar from "../DriverInfoBar/DriverInfoBar";
 import DriverProfileTable from "../DriverProfileTable";
 import PieChart from "../PieChart";

@@ -123,7 +123,6 @@ export const checkError = (
   }
 
   if (changed && checkVariable.endDate) {
-
     if (
       moment(checkVariable.endDate).isBefore(
         filteredAppointments[Object.keys(changed)[0]].startDate,
@@ -131,11 +130,6 @@ export const checkError = (
       )
     ) {
       alert("End date is before start");
-      return;
-    }
-
-    if (moment(checkVariable.endDate).format("MMM Do YY") !== moment(filteredAppointments[Object.keys(changed)[0]].startDate).format("MMM Do YY")){
-      alert("Appointment should not span mutiple days");
       return;
     }
   }
@@ -150,13 +144,6 @@ export const checkError = (
       alert("Start date is after end");
       return;
     }
-
-    if (moment(checkVariable.startDate).format("MMM Do YY") !== moment(filteredAppointments[Object.keys(changed)[0]].endDate).format("MMM Do YY")){
-      alert("Appointment should not span mutiple days");
-      return;
-    }
-
-  
   }
 
   if (added && checkVariable.endDate) {
@@ -164,22 +151,11 @@ export const checkError = (
       alert("End date is before start");
       return;
     }
-
-    if (moment(checkVariable.endDate).format("MMM Do YY") !== moment(added.startDate).format("MMM Do YY")){
-      alert("Appointment should not span mutiple days");
-      return;
-    }
-
   }
 
   if (added && checkVariable.startDate) {
     if (moment(checkVariable.startDate).isAfter(added.endDate, "second")) {
       alert("Start date is after end");
-      return;
-    }
-
-    if (moment(checkVariable.startDate).format("MMM Do YY") !== moment(added.endDate).format("MMM Do YY")){
-      alert("Appointment should not span mutiple days");
       return;
     }
   }

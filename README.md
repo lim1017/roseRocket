@@ -1,10 +1,10 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## To start App for the first time
 
 In the project directory, you can run:
-
-### `yarn start`
+npm install 
+npm start
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -12,57 +12,60 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### To run Tests
+npx cypress open
+or
+yarn run cypress open
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+### Notes:
+I believe I have fullfilled all the requirements 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Part A
+- There are three (3) drivers, and scheduler will only display the tasks of the active driver.
 
-### `yarn eject`
+- There are three (3) types of tasks to choose from when creating a an task: Pickup/Dropoff/Other
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- There are three (3) views the dispatcher may create tasks from: daily/weekly/monthly.  
+The component I used as my skeleton had months/years built already.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- A task cannot extend across mutiple days: It will automatically keep the day/month/year of the start/end date insync
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- If a new or edited task conflicts with an existing task, user will recieve a prompt asking if they wish to overwrite.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Dispatcher may delete tasks
 
-## Learn More
+### Part B
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- dispatcher can select a "Time Interval" and download a csv which will organize the drivers tasks similar to the example provided.
+I did make a couple small change, 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1) In the example a 2 day interval is selected, and the following is shown.  
+Time-Frame:  (2 day interval)
+Day 1-3
+Day 3-6
 
-### Code Splitting
+Where should a task schduled on Day 3 go?  Instead choose breakdown the days as follows:
+Time-Frame:  (2 day interval)
+Day 1-2
+Day 3-4
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+2) Because my scheduler component does tracks days/month/years, and it starts from the current date.
 
-### Analyzing the Bundle Size
+The csv will start from the first appointment on the drivers schedule, rather then the first day of the year.  It makes no sense if a task was added on July 30th 2020, and the first 90 lines of the csv were 
+Jan 1-2: 0/0/0
+Jan 3-4: 0/0/0
+...
+July 29-30: 1/0/0
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+### Additional Feature
 
-### Making a Progressive Web App
+- I have deployed the app at : https://tomlimroserocket.netlify.app/
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+- I have created a driver profile, which will display The drivers breakdown of their tasks
+The back button will however reset the the data, because there is no data presistance. 
 
-### Advanced Configuration
+- Used cypress to write Integration tests for testing basic functions.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

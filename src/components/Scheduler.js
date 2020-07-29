@@ -23,8 +23,7 @@ import {
   DateNavigator,
   TodayButton,
   AppointmentForm,
-  ConfirmationDialog,
-  AppointmentTooltip
+  AppointmentTooltip,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import Header from "./Header";
 import Modal from "./Modal";
@@ -38,7 +37,6 @@ import {
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
 import { tasks } from "../data/data";
-
 
 import Moment from "moment";
 import { extendMoment } from "moment-range";
@@ -72,10 +70,13 @@ const SchedulerComponent = (props) => {
   });
 
   const changeAddedAppointment = (addedAppointment) => {
-    console.log(addedAppointment)
-    let setStartingTask = {...addedAppointment}
-    if(!addedAppointment.taskID){
-      setStartingTask = {...addedAppointment, taskID:tasks[0].id, title:tasks[0].text}
+    let setStartingTask = { ...addedAppointment, allDay: false };
+    if (!addedAppointment.taskID) {
+      setStartingTask = {
+        ...addedAppointment,
+        taskID: tasks[0].id,
+        title: tasks[0].text,
+      };
     }
 
     const set60MinIntervalMonthly =
@@ -83,19 +84,15 @@ const SchedulerComponent = (props) => {
         setStartingTask.endDate,
         "day"
       ) &&
-      moment(setStartingTask.startDate).isSame(
-        setStartingTask.endDate,
-        "year"
-      )
+      moment(setStartingTask.startDate).isSame(setStartingTask.endDate, "year")
         ? {
             ...setStartingTask,
             endDate: moment(setStartingTask.startDate)
               .add(60, "minutes")
               .toDate(),
+            allDay: false,
           }
         : setStartingTask;
-
-    console.log(set60MinIntervalMonthly)
 
     setActiveAppointment({
       ...activeAppointment,
@@ -190,11 +187,9 @@ const SchedulerComponent = (props) => {
         <Toolbar />
         <DateNavigator />
         <TodayButton />
-        {/* <ConfirmationDialog /> */}
-
 
         <ViewSwitcher />
-        <Appointments           data-cy="appointment" />
+        <Appointments data-cy="appointment" />
         <AppointmentTooltip showOpenButton showDeleteButton />
         <AppointmentForm
           basicLayoutComponent={BasicLayout}

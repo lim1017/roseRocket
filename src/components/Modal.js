@@ -36,7 +36,6 @@ export default function SimpleModal({
   msg,
 }) {
   const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
 
   const handleClose = () => {
@@ -52,8 +51,13 @@ export default function SimpleModal({
     <div style={modalStyle} className={classes.paper}>
       <h2 id="simple-modal-title">{title}</h2>
       <p>{msg}</p>
-      <button onClick={handleYes}>Yes</button>
-      <button onClick={handleClose}>No</button>
+      <button             
+        data-cy="yesConflictBtn"
+        onClick={handleYes}>Yes</button>
+      <button 
+        style={{marginLeft:"1em"}}
+        data-cy="noConflictBtn"
+        onClick={handleClose}>No</button>
     </div>
   );
 

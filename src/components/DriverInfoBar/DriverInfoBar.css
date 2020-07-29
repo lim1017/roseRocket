@@ -1,4 +1,4 @@
-.student-container{
+.driver-container{
   margin:auto;
   width: 60% !important;
   border: 1px solid black;
@@ -12,7 +12,7 @@
   justify-content: center;
 }
 
-.student-name{
+.driver-name{
   font-size: 24px;
 }
 

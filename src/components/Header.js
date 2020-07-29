@@ -35,9 +35,13 @@ const Header = (props) => {
           active={activeDriver}
           setActive={setActiveDriver}
           testID="driverDropdown"
+          // data-cy="driverDropdown"
+          data-cy="driverDropdown"
+
         />
         <Link to={`/profile/${activeDriver}`}>
           <Button
+            data-cy="driverProfileBtn"
             variant="contained"
             color="primary"
             style={{ height: "40px", marginTop: "2em", marginLeft: "0.2em" }}
@@ -49,6 +53,7 @@ const Header = (props) => {
 
       <div>
         <Button
+          data-cy="csvBtn"
           variant="contained"
           color="primary"
           style={{ height: "40px", marginTop: "2em", marginRight: "0.2em" }}

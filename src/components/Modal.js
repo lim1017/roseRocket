@@ -52,8 +52,13 @@ export default function SimpleModal({
     <div style={modalStyle} className={classes.paper}>
       <h2 id="simple-modal-title">{title}</h2>
       <p>{msg}</p>
-      <button onClick={handleYes}>Yes</button>
-      <button onClick={handleClose}>No</button>
+      <button             
+        data-cy="yesConflictBtn"
+        onClick={handleYes}>Yes</button>
+      <button 
+        style={{marginLeft:"1em"}}
+        data-cy="noConflictBtn"
+        onClick={handleClose}>No</button>
     </div>
   );
 

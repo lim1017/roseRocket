@@ -5,7 +5,7 @@ import { tasks } from "../data/data";
 export const BasicLayout = ({
   onFieldChange,
   appointmentData,
-  ...restProps
+  ...restProps 
 }) => {
   const [selectedTask, setSelectedTask] = useState(tasks[0]);
 
@@ -16,16 +16,17 @@ export const BasicLayout = ({
     } else onFieldChange({ [type]: nextValue });
   };
 
-  useEffect(() => {
-    onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id, allDay: false });
-  }, []);
+  // useEffect(() => {
+  //   onFieldChange({ title: tasks[0].text, taskID: tasks[0].text.id, allDay: false });
+  // }, []);
 
   return (
     <div>
       <div style={{ width: "90%", margin: "auto" }}>
         <AppointmentForm.Label text="Select Task" type="title" />
         <AppointmentForm.Select
-          value={selectedTask.id}
+          data-cy="dropDown"
+          value={appointmentData.taskID}
           onValueChange={(value) => onCustomFieldChange(value, "title")}
           availableOptions={tasks}
           type="filledSelect"
@@ -33,6 +34,7 @@ export const BasicLayout = ({
         <br />
         <AppointmentForm.Label text="Location" type="location" />
         <AppointmentForm.TextEditor
+          data-cy="location"
           value={appointmentData.location}
           onValueChange={(value) => onCustomFieldChange(value, "location")}
           placeholder="Location"
@@ -41,6 +43,7 @@ export const BasicLayout = ({
         <br />
         <AppointmentForm.Label text="Notes" type="notes" />
         <AppointmentForm.TextEditor
+          data-cy="notes"
           value={appointmentData.notes}
           onValueChange={(value) => onCustomFieldChange(value, "notes")}
           placeholder="Additional Details"

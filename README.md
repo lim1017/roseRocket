@@ -50,21 +50,21 @@ I did make a couple small change,
 
 1) In the example a 2 day interval is selected, and the following is shown.  
 Time-Frame:  (2 day interval)
-Day 1-3
-Day 3-6
+- Day 1-3
+- Day 3-6
 
 Where should a task schduled on Day 3 go?  Instead choose breakdown the days as follows:
 Time-Frame:  (2 day interval)
-Day 1-2
-Day 3-4
+- Day 1-2
+- Day 3-4
 
 2) Because my scheduler component does tracks days/month/years, and it starts from the current date.
 
 The csv will start from the first appointment on the drivers schedule, rather then the first day of the year.  It makes no sense if a task was added on July 30th 2020, and the first 90 lines of the csv were 
-Jan 1-2: 0/0/0
-Jan 3-4: 0/0/0
-...
-July 29-30: 1/0/0
+- Jan 1-2: 0/0/0
+- Jan 3-4: 0/0/0
+- ...
+- July 29-30: 1/0/0
 
 ### Additional Feature
 

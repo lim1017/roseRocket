@@ -6,9 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const faker = require("faker");
 
 function DriverInfoBar(props) {
-  // { img, student, index }
   return (
-    <Container className="student-container">
+    <Container className="driver-container">
       <Row>
         <Col className="avatar-container">
           <img
@@ -22,11 +21,11 @@ function DriverInfoBar(props) {
         </Col>
         <Col>
           <Row>
-            <div class="student-name">
+            <div class="driver-name" data-cy="driverName">
               <strong>{props.driver} The Truck Driver</strong>{" "}
             </div>
           </Row>
-          <Row class="student-bio">
+          <Row class="driver-bio">
             Lorem Ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry's standard dummy text
             ever since the 1500s.{" "}

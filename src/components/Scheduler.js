@@ -37,6 +37,8 @@ import {
   commitChanges,
   convertData4csv,
 } from "../helpers/SchedulerHelpers";
+import { tasks } from "../data/data";
+
 
 import Moment from "moment";
 import { extendMoment } from "moment-range";
@@ -70,22 +72,30 @@ const SchedulerComponent = (props) => {
   });
 
   const changeAddedAppointment = (addedAppointment) => {
+    console.log(addedAppointment)
+    let setStartingTask = {...addedAppointment}
+    if(!addedAppointment.taskID){
+      setStartingTask = {...addedAppointment, taskID:tasks[0].id, title:tasks[0].text}
+    }
+
     const set60MinIntervalMonthly =
-      !moment(addedAppointment.startDate).isSame(
-        addedAppointment.endDate,
+      !moment(setStartingTask.startDate).isSame(
+        setStartingTask.endDate,
         "day"
       ) &&
-      moment(addedAppointment.startDate).isSame(
-        addedAppointment.endDate,
+      moment(setStartingTask.startDate).isSame(
+        setStartingTask.endDate,
         "year"
       )
         ? {
-            ...addedAppointment,
-            endDate: moment(addedAppointment.startDate)
+            ...setStartingTask,
+            endDate: moment(setStartingTask.startDate)
               .add(60, "minutes")
               .toDate(),
           }
-        : addedAppointment;
+        : setStartingTask;
+
+    console.log(set60MinIntervalMonthly)
 
     setActiveAppointment({
       ...activeAppointment,
@@ -180,11 +190,11 @@ const SchedulerComponent = (props) => {
         <Toolbar />
         <DateNavigator />
         <TodayButton />
-        <ConfirmationDialog />
+        {/* <ConfirmationDialog /> */}
 
 
         <ViewSwitcher />
-        <Appointments />
+        <Appointments           data-cy="appointment" />
         <AppointmentTooltip showOpenButton showDeleteButton />
         <AppointmentForm
           basicLayoutComponent={BasicLayout}

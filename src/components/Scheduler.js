@@ -69,6 +69,9 @@ const SchedulerComponent = (props) => {
     editingAppointmentId: undefined,
   });
 
+  // console.log(activeAppointment)
+  // console.log(filteredAppointments)
+
   const changeAddedAppointment = (addedAppointment) => {
     let setStartingTask = { ...addedAppointment, allDay: false };
     if (!addedAppointment.taskID) {

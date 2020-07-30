@@ -123,9 +123,14 @@ export const checkError = (
   }
 
   if (changed && checkVariable.endDate) {
+    let chgAppointmentID = Object.keys(changed)[0];
+    let originalAppointment = filteredAppointments.find(
+      (obj) => obj.id == chgAppointmentID
+    );
+
     if (
       moment(checkVariable.endDate).isBefore(
-        filteredAppointments[Object.keys(changed)[0]].startDate,
+        originalAppointment.startDate,
         "second"
       )
     ) {
@@ -135,9 +140,14 @@ export const checkError = (
   }
 
   if (changed && checkVariable.startDate) {
+    let chgAppointmentID = Object.keys(changed)[0];
+    let originalAppointment = filteredAppointments.find(
+      (obj) => obj.id == chgAppointmentID
+    );
+
     if (
       moment(checkVariable.startDate).isAfter(
-        filteredAppointments[Object.keys(changed)[0]].endDate,
+        originalAppointment.endDate,
         "second"
       )
     ) {
@@ -149,13 +159,6 @@ export const checkError = (
   if (added && checkVariable.endDate) {
     if (moment(checkVariable.endDate).isBefore(added.startDate, "second")) {
       alert("End date is before start");
-      return;
-    }
-  }
-
-  if (added && checkVariable.startDate) {
-    if (moment(checkVariable.startDate).isAfter(added.endDate, "second")) {
-      alert("Start date is after end");
       return;
     }
   }
